@@ -24,6 +24,35 @@ app.layout = html.Div(children=[
 
     html.Div(
         html.H2('Earthquakes')
+    ),
+
+    html.Div(
+        style={'background-color': 'red', 'height': '700px', 'display': 'flex'},
+        children=[
+            html.Div(
+                style={'background-color': 'blue',
+                       'width': '30%'}
+            ),
+            html.Div(
+                style={'background-color': 'green',
+                       'width': '70%'}
+            )
+        ]
+    ),
+
+    dcc.Dropdown(
+        id='quakesDropdown'
+    ),
+
+    html.Br(),
+    html.Br(),
+    html.Br(),
+
+    html.Center(
+        dcc.Graph(
+            id='graph1',
+            className='wideGraph'
+        )
     )
 ])
 
