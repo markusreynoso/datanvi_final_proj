@@ -1,5 +1,5 @@
 :root {
-    --off-white: #e6e5e3;
+    --off-white: #ebebeb;
     --teal: #d6fff6;
     --dark-color: #022f40;
     --mid-blue: #4dccbd;
@@ -57,13 +57,13 @@ h2 {
 }
 
 .spacer {
-    margin-top: 200px;
+    margin-top: 150px;
 }
 
 #seismicEventsTitle {
     color : var(--salmon)
 }
 
-#rainfallLevelsTitle {
-    color : var(--mid-blue)
+#conflictsTitle {
+    color : var(--bright-red)
 }

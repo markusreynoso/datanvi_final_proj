@@ -4,6 +4,12 @@ import plotly.express as px
 import pandas as pd
 
 introParagraph = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at pharetra ante. Vestibulum ut sapien id nibh efficitur pulvinar id in leo. Nullam aliquet, velit at fermentum dictum, neque massa vehicula velit, ac scelerisque nunc mi quis eros. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Mauris finibus volutpat congue. Cras ac gravida dolor. Praesent sed accumsan orci. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Ut porttitor nibh sem, vitae varius orci efficitur eget. Proin tincidunt, nisi et molestie congue, nisi nibh dignissim risus, in malesuada erat massa eu dolor. Vestibulum a quam at libero scelerisque tempus.'
+offWhite = "#ebebeb"
+teal = "#d6fff6"
+darkColor = "#022f40"
+midBlue = "4dccbd"
+brightRed = "d52941"
+salmon = "ff8484"
 
 app = Dash(__name__)
 
@@ -16,7 +22,7 @@ app.layout = html.Div(children=[
         html.Span('Seismic Events,', id='seismicEventsTitle'),
         html.Br(),
         'and ',
-        html.Span('Rainfall Levels', id='rainfallLevelsTitle')
+        html.Span('Conflicts', id='conflictsTitle')
     ]),
 
     html.Div(children=[
@@ -25,10 +31,13 @@ app.layout = html.Div(children=[
 
     html.Div(className='spacer'),
 
-    html.Div(html.H2('Earthquakes')),
+    html.Div(children=[
+        html.H2('Earthquakes - ', style={'display': 'inline-block'}),
+        html.H2(id='quakeRegionText', style={'display': 'inline-block', 'margin-left': '15px'}),
+    ]),
 
     dcc.Dropdown(
-        id='quakeDropdown',  # Make sure this ID is referenced in the callback
+        id='quakeDropdown',
         className='regionDropdown',
         style={
             'font-family': 'Arial, sans-serif',
@@ -36,7 +45,6 @@ app.layout = html.Div(children=[
             'color': '#022f40'
         },
         options=[
-            {'label': 'Overall', 'value': 'Overall'},
             {'label': 'Region I - Ilocos Region', 'value': 'Region I'},
             {'label': 'Region II - Cagayan Valley', 'value': 'Region II'},
             {'label': 'Region III - Central Luzon', 'value': 'Region III'},
@@ -56,11 +64,13 @@ app.layout = html.Div(children=[
             {'label': 'BARMM - Bangsamoro Autonomous Region in Muslim Mindanao', 'value': 'BARMM'},
             {'label': 'Region XVIII', 'value': 'Region XVIII'}
         ],
-        value='Overall'
     ),
 
-    html.Div(
-        style={'background-color': 'red', 'height': '1400px', 'display': 'flex', 'flex-direction': 'column'},
+    html.Br(),
+
+    html.Center(
+        html.Div(
+        style={'background-color': 'red', 'height': '1000px', 'width': '90%', 'display': 'flex', 'flex-direction': 'column'},
         children=[
             html.Div(
                 style={'background-color': 'blue', 'height': '45%', 'display': 'flex', 'flex-direction': 'row'},
@@ -92,6 +102,7 @@ app.layout = html.Div(children=[
                 ]
             )
         ]
+    )
     ),
 
     html.Div(id='spacer'),
@@ -125,7 +136,7 @@ app.layout = html.Div(children=[
             {'label': 'BARMM - Bangsamoro Autonomous Region in Muslim Mindanao', 'value': 'BARMM'},
             {'label': 'Region XVIII', 'value': 'Region XVIII'}
         ],
-        value='Overall'
+        value='Region I'
     ),
 
     html.Br(),
@@ -135,45 +146,60 @@ app.layout = html.Div(children=[
 
 
 @app.callback(
-    Output(component_id='quakePie', component_property='figure'),
+    [Output(component_id='quakePie', component_property='figure'),
+     Output(component_id='quakeRegionText', component_property='children'),],
     Input(component_id='quakeDropdown', component_property='value')
 )
 def updateQuakePie(region):
     df = pd.read_csv('datasets/earthquake.csv')
-    df.sort_values('region', ascending=True)
-    if region == "Overall":
-        fig = px.pie(
-            df,
-            names='region',
-            hole=0.8,
-        )
-    else:
-        fig = px.pie(
-            df.loc[df['region'] == region].sort_values('region'),
-            names='province',
-            hole=0.8,
-        )
 
-    fig.update_traces(textinfo='none')
+    # Filter the dataframe for the selected region
+    filtered_df = df.loc[df['region'] == region]
 
-    # Move the pie chart up
-    fig.update_layout(
-        paper_bgcolor='#e6e5e3',
-        legend=dict(
-            orientation='h',
-            yanchor='top',
-            y=1.8,
-            xanchor='center',
-            x=0.5,
-            itemsizing='constant',
-            bgcolor='rgba(255, 255, 255, 0.5)',
-            bordercolor='rgba(255, 255, 255, 0)',
-            borderwidth=0
-        ),
-        margin=dict(t=50, b=50, l=50, r=50)  # Add margin to the layout if needed
+    # Group by province and count the occurrences
+    province_counts = filtered_df['province'].value_counts()
+
+    # Get the top 3 provinces
+    top_provinces = province_counts.nlargest(3)
+
+    # Sum the rest and label as 'Others'
+    others_count = province_counts[~province_counts.index.isin(top_provinces.index)].sum()
+
+    # Create a new Series for the others, if there are any
+    if others_count > 0:
+        others_series = pd.Series({'Others': others_count})
+        # Concatenate top_provinces with others_series
+        top_provinces = pd.concat([top_provinces, others_series])
+
+    top_provinces = top_provinces.sort_values(ascending=False)
+
+    fig = px.pie(
+        names=top_provinces.index,
+        values=top_provinces.values,
+        hole=0.8,
+        color=top_provinces.index,
+        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#022f40']
     )
 
-    return fig
+    fig.update_traces(textinfo='none'),
+
+    fig.update_layout(
+        paper_bgcolor=offWhite,
+        legend=dict(
+            orientation='v',
+            yanchor='middle',
+            xanchor='center',
+            y=0.5,
+            x=0.5,
+            itemsizing='constant',
+            bgcolor='rgba(255, 255, 255, 0)',
+            bordercolor='rgba(2, 47, 64, 100)',
+            borderwidth=0
+        ),
+        margin=dict(t=0, b=100, l=10, r=10)
+    )
+
+    return fig, region
 
 
 @app.callback(
@@ -183,26 +209,63 @@ def updateQuakePie(region):
 def updateQuakeHist(region):
     df = pd.read_csv('datasets/earthquake.csv')
     df.sort_values('region', ascending=True)
-    if region == "Overall":
-        fig = px.histogram(
-            df['magnitude'],
-            x='magnitude',
-            color_discrete_sequence=['#ff8484']
-        )
-    else:
-        fig = px.histogram(
-            df.loc[df['region'] == region]['magnitude'],
-            x='magnitude',
-            color_discrete_sequence=['#ff8484']
-        )
+    fig = px.histogram(
+        df.loc[df['region'] == region]['magnitude'],
+        x='magnitude',
+        color_discrete_sequence=['#ff8484'],
+    )
 
     fig.update_layout(
-        paper_bgcolor='#e6e5e3',
+        paper_bgcolor=offWhite,
+        title=dict(
+            text=f"{region} - Earthquake Magnitude Distribution",
+            font=dict(
+                size=20,
+                color='#022f40',
+                family='Arial',
+            ),
+            x=0.5,
+            xanchor='center'
+        )
     )
 
     return fig
 
+@app.callback(
+    Output(component_id='quakeLine', component_property='figure'),
+    Input(component_id='quakeDropdown', component_property='value')
+)
+def updateQuakeLine(region):
+    df = pd.read_csv('datasets/earthquake.csv')
+    df = df.loc[df['region'] == region]
+    df.groupby('date_time_ph')['magnitude'].count().reset_index()
 
+    fig = px.line(
+        df.groupby('date_time_ph')['magnitude'].count().reset_index(),
+        x='date_time_ph',
+        y='magnitude'
+    )
+
+    fig.update_layout(
+        paper_bgcolor= offWhite,
+        yaxis_title="Number of Earthquakes",
+        xaxis_title="Year",
+        xaxis=dict(
+            scaleanchor=None,  # Remove any previous anchors
+            constrain='domain'  # Prevent the axis from changing the figure size
+        ),
+        yaxis=dict(
+            scaleanchor=None,  # Remove any previous anchors
+            constrain='domain'  # Prevent the axis from changing the figure size
+        ),
+        margin=dict(l=200, r=200, t=50, b=50),  # Adjust margins as needed
+    )
+
+    fig.update_traces(
+        line=dict(color='#ff8484')
+    )
+
+    return fig
 
 
 if __name__ == '__main__':
