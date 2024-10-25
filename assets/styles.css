@@ -12,8 +12,6 @@ body {
 }
 
 
-
-
 p {
     font-size: 12pt;
     font-family: 'Arial', sans-serif;
@@ -50,7 +48,7 @@ h2 {
     width: 1500px;
 }
 
-#quakesDropdown {
+.regionDropdown {
     width: 300px;
     margin-top: -5px;
     margin-left: 100px;
@@ -58,6 +56,14 @@ h2 {
     padding: 0;
 }
 
-#spacer {
+.spacer {
     margin-top: 200px;
+}
+
+#seismicEventsTitle {
+    color : var(--salmon)
+}
+
+#rainfallLevelsTitle {
+    color : var(--mid-blue)
 }
