@@ -73,6 +73,7 @@ app.layout = html.Div(children=[
                                'justify-content': 'center',
                                'align-items': 'center'},
                         children=[
+                            # ToDo: Pie Graph
                             dcc.Graph(
                                 id='quakePie',
                                 style={'width': '100%',

@@ -1,0 +1,63 @@
+:root {
+    --off-white: #e6e5e3;
+    --teal: #d6fff6;
+    --dark-color: #022f40;
+    --mid-blue: #4dccbd;
+    --bright-red: #d52941;
+    --salmon: #ff8484;
+}
+
+body {
+    background-color: var(--off-white);
+}
+
+
+
+
+p {
+    font-size: 12pt;
+    font-family: 'Arial', sans-serif;
+    letter-spacing: 0.9px;
+    line-height: 1;
+    color: var(--dark-color);
+    margin-top: 80px;
+    margin-left: 100px;
+    margin-right: 500px;
+}
+
+h1 {
+    font-size: 70pt;
+    font-family: 'Arial', sans-serif;
+    letter-spacing: -5px;
+    line-height: 0.9;
+    color: var(--dark-color);
+    margin-left: 100px;
+    margin-top: 100px;
+}
+
+h2 {
+    font-size: 50pt;
+    font-family: 'Arial', sans-serif;
+    letter-spacing: -5px;
+    line-height: 0.9;
+    color: var(--dark-color);
+    margin-left: 100px;
+    margin-top: 100px;
+    margin-bottom: 20px;
+}
+
+.wideGraph{
+    width: 1500px;
+}
+
+#quakesDropdown {
+    width: 300px;
+    margin-top: -5px;
+    margin-left: 100px;
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+#spacer {
+    margin-top: 200px;
+}
