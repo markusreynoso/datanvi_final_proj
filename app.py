@@ -109,9 +109,13 @@ app.layout = html.Div(children=[
 
     html.Div(id='spacer'),
 
-    html.Div(html.H2('Rainfall')),
+    html.Div(children=[
+        html.H2('Houses - ', style={'display': 'inline-block'}),
+        html.H2(id='houseRegionText', style={'display': 'inline-block', 'margin-left': '15px'}),
+    ]),
 
     dcc.Dropdown(
+        id='houseDropdown',
         className='regionDropdown',
         style={
             'font-family': 'Arial, sans-serif',
@@ -138,14 +142,167 @@ app.layout = html.Div(children=[
             {'label': 'BARMM - Bangsamoro Autonomous Region in Muslim Mindanao', 'value': 'BARMM'},
             {'label': 'Region XVIII', 'value': 'Region XVIII'}
         ],
-        value='Region I'
     ),
+
+    html.Center(
+        html.Div(
+            style={'background-color': 'red', 'height': '1000px', 'width': '90%', 'display': 'flex',
+                   'flex-direction': 'column'},
+            children=[
+                html.Div(
+                    style={'background-color': 'blue', 'height': '45%', 'display': 'flex', 'flex-direction': 'row'},
+                    children=[
+                        html.Div(
+                            style={'background-color': 'yellow', 'width': '40%', 'display': 'flex',
+                                   'justify-content': 'center', 'align-items': 'center'},
+                            children=[
+                                dcc.Graph(
+                                    id='housePie',
+                                    style={'width': '100%', 'height': '100%'},
+                                    figure={}
+                                )
+                            ]
+                        ),
+                        dcc.Graph(
+                            id='houseBoxplot',
+                            style={'width': '100%', 'height': '100%'},
+                            figure={}
+                        )
+                    ]
+                ),
+                html.Div(
+                    style={'background-color': 'green', 'height': '55%'},
+                    children=[
+                        # dcc.Graph(
+                        #     id='houseLine',
+                        #     style={'width': '100%', 'height': '100%'}
+                        # )
+                    ]
+                )
+            ]
+        )
+    ),
+
 
     html.Br(),
     html.Br(),
     html.Br(),
 ])
+# ---------------------------------------------------------------------------------------------------------------------
+@app.callback(
+    [Output(component_id='housePie', component_property='figure'),
+     Output(component_id='houseRegionText', component_property='children'), ],
+    Input(component_id='houseDropdown', component_property='value')
+)
+def updateHousePie(region):
+    df = pd.read_csv('https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/newPH_housing.csv')
+    filtered_df = df.loc[df['region'] == region]
+    province_counts = filtered_df['province'].value_counts()
+    top_provinces = province_counts.nlargest(3)
+    others_count = province_counts[~province_counts.index.isin(top_provinces.index)].sum()
+    if others_count > 0:
+        others_series = pd.Series({'Others': others_count})
+        top_provinces = pd.concat([top_provinces, others_series])
 
+    top_provinces = top_provinces.sort_values(ascending=False)
+
+    fig = px.pie(
+        names=top_provinces.index,
+        values=top_provinces.values,
+        hole=0.8,
+        color=top_provinces.index,
+        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#022f40'],
+    )
+
+    fig.update_layout(
+        title=dict(
+            text=f'Top 3 Areas with the Most Houses<br>{region}',
+            font=dict(
+                size=18,
+                color='#022f40',
+                family='Arial, sans-serif'
+            ),
+            x=0.5,
+            xanchor='center'
+        ),
+        paper_bgcolor=offWhite,
+        legend=dict(
+            orientation='v',
+            yanchor='middle',
+            xanchor='center',
+            y=0.5,
+            x=0.5,
+            itemsizing='constant',
+            bgcolor='rgba(255, 255, 255, 0)',
+            bordercolor='rgba(2, 47, 64, 100)',
+            borderwidth=0
+        ),
+        margin=dict(t=120, b=100, l=10, r=10)
+    )
+
+    fig.update_traces(
+        hovertemplate="<b>%{label}</b><br>Count: %{value}<extra></extra>",
+        textinfo='none'
+    )
+    return fig, region
+
+@app.callback(
+Output(component_id='houseBoxplot', component_property='figure'),
+    Input(component_id='houseDropdown', component_property='value')
+)
+
+def updateHouseBoxplot(region):
+    df = pd.read_csv('https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/newPH_housing.csv')
+    df = df.loc[df['region'] == region]
+
+
+    fig = px.box(
+        df,
+        x = 'province',
+        y = 'price'
+    )
+
+    fig.update_layout(
+        paper_bgcolor=offWhite,
+        title=dict(
+            text=f"{region} - House Prices Distribution",
+            font=dict(
+                size=20,
+                color='#022f40',
+                family='Arial',
+            ),
+            x=0.5,
+            xanchor='center'
+        )
+    )
+
+    fig.update_layout(
+        paper_bgcolor=offWhite,
+        yaxis_title="Average Price of a House",
+        xaxis_title="Provinces",
+        xaxis=dict(
+            scaleanchor=None,
+            constrain='domain'
+        ),
+        yaxis=dict(
+            scaleanchor=None,
+            constrain='domain'
+        ),
+        margin=dict(l=200, r=200, t=50, b=50),
+    )
+
+    fig.update_traces(
+        hovertemplate="<b>Year:</b> %{x}<br><b>Count:</b> %{y}<extra></extra>",
+        line=dict(color='#ff8484'),
+        marker_color ='#ff8484',
+    )
+
+    fig.update_traces(
+        hoverinfo="x+y+text",  # Customize which information to show
+        hovertemplate="<b>Category:</b> %{x}<br><b>Value:</b> %{y}<extra></extra>"
+    )
+
+    return fig
 
 @app.callback(
     [Output(component_id='quakePie', component_property='figure'),
@@ -171,6 +328,8 @@ def updateQuakePie(region):
         color=top_provinces.index,
         color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#022f40'],
     )
+
+
 
     fig.update_layout(
         title=dict(
@@ -275,6 +434,7 @@ def updateQuakeLine(region):
     )
 
     return fig
+
 
 
 if __name__ == '__main__':
