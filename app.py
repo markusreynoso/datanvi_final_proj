@@ -70,39 +70,41 @@ app.layout = html.Div(children=[
 
     html.Center(
         html.Div(
-        style={'background-color': 'red', 'height': '1000px', 'width': '90%', 'display': 'flex', 'flex-direction': 'column'},
-        children=[
-            html.Div(
-                style={'background-color': 'blue', 'height': '45%', 'display': 'flex', 'flex-direction': 'row'},
-                children=[
-                    html.Div(
-                        style={'background-color': 'yellow', 'width': '40%', 'display': 'flex', 'justify-content': 'center', 'align-items': 'center'},
-                        children=[
-                            dcc.Graph(
-                                id='quakePie',
-                                style={'width': '100%', 'height': '100%'},
-                                figure={}
-                            )
-                        ]
-                    ),
-                    dcc.Graph(
-                        id='quakeHist',
-                        style={'width': '100%', 'height': '100%'},
-                        figure={}
-                    )
-                ]
-            ),
-            html.Div(
-                style={'background-color': 'green', 'height': '55%'},
-                children=[
-                    dcc.Graph(
-                        id='quakeLine',
-                        style={'width': '100%', 'height': '100%'}
-                    )
-                ]
-            )
-        ]
-    )
+            style={'background-color': 'red', 'height': '1000px', 'width': '90%', 'display': 'flex',
+                   'flex-direction': 'column'},
+            children=[
+                html.Div(
+                    style={'background-color': 'blue', 'height': '45%', 'display': 'flex', 'flex-direction': 'row'},
+                    children=[
+                        html.Div(
+                            style={'background-color': 'yellow', 'width': '40%', 'display': 'flex',
+                                   'justify-content': 'center', 'align-items': 'center'},
+                            children=[
+                                dcc.Graph(
+                                    id='quakePie',
+                                    style={'width': '100%', 'height': '100%'},
+                                    figure={}
+                                )
+                            ]
+                        ),
+                        dcc.Graph(
+                            id='quakeHist',
+                            style={'width': '100%', 'height': '100%'},
+                            figure={}
+                        )
+                    ]
+                ),
+                html.Div(
+                    style={'background-color': 'green', 'height': '55%'},
+                    children=[
+                        dcc.Graph(
+                            id='quakeLine',
+                            style={'width': '100%', 'height': '100%'}
+                        )
+                    ]
+                )
+            ]
+        )
     ),
 
     html.Div(id='spacer'),
@@ -147,7 +149,7 @@ app.layout = html.Div(children=[
 
 @app.callback(
     [Output(component_id='quakePie', component_property='figure'),
-     Output(component_id='quakeRegionText', component_property='children'),],
+     Output(component_id='quakeRegionText', component_property='children'), ],
     Input(component_id='quakeDropdown', component_property='value')
 )
 def updateQuakePie(region):
@@ -196,6 +198,10 @@ def updateQuakePie(region):
         margin=dict(t=120, b=100, l=10, r=10)
     )
 
+    fig.update_traces(
+        hovertemplate="<b>%{label}</b><br>Count: %{value}<extra></extra>",
+        textinfo='none'
+    )
     return fig, region
 
 
@@ -226,7 +232,12 @@ def updateQuakeHist(region):
         )
     )
 
+    fig.update_traces(
+        hovertemplate="<b>Magnitude:</b> %{x}<br><b>Count:</b> %{y}<extra></extra>"
+    )
+
     return fig
+
 
 @app.callback(
     Output(component_id='quakeLine', component_property='figure'),
@@ -244,21 +255,22 @@ def updateQuakeLine(region):
     )
 
     fig.update_layout(
-        paper_bgcolor= offWhite,
+        paper_bgcolor=offWhite,
         yaxis_title="Number of Earthquakes",
         xaxis_title="Year",
         xaxis=dict(
-            scaleanchor=None,  # Remove any previous anchors
-            constrain='domain'  # Prevent the axis from changing the figure size
+            scaleanchor=None,
+            constrain='domain'
         ),
         yaxis=dict(
-            scaleanchor=None,  # Remove any previous anchors
-            constrain='domain'  # Prevent the axis from changing the figure size
+            scaleanchor=None,
+            constrain='domain'
         ),
-        margin=dict(l=200, r=200, t=50, b=50),  # Adjust margins as needed
+        margin=dict(l=200, r=200, t=50, b=50),
     )
 
     fig.update_traces(
+        hovertemplate="<b>Year:</b> %{x}<br><b>Count:</b> %{y}<extra></extra>",
         line=dict(color='#ff8484')
     )
 
