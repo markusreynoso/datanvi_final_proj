@@ -152,23 +152,12 @@ app.layout = html.Div(children=[
 )
 def updateQuakePie(region):
     df = pd.read_csv('datasets/earthquake.csv')
-
-    # Filter the dataframe for the selected region
     filtered_df = df.loc[df['region'] == region]
-
-    # Group by province and count the occurrences
     province_counts = filtered_df['province'].value_counts()
-
-    # Get the top 3 provinces
     top_provinces = province_counts.nlargest(3)
-
-    # Sum the rest and label as 'Others'
     others_count = province_counts[~province_counts.index.isin(top_provinces.index)].sum()
-
-    # Create a new Series for the others, if there are any
     if others_count > 0:
         others_series = pd.Series({'Others': others_count})
-        # Concatenate top_provinces with others_series
         top_provinces = pd.concat([top_provinces, others_series])
 
     top_provinces = top_provinces.sort_values(ascending=False)
@@ -178,12 +167,20 @@ def updateQuakePie(region):
         values=top_provinces.values,
         hole=0.8,
         color=top_provinces.index,
-        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#022f40']
+        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#022f40'],
     )
 
-    fig.update_traces(textinfo='none'),
-
     fig.update_layout(
+        title=dict(
+            text=f'Top 3 Areas with the Most Occurrences<br>{region}',
+            font=dict(
+                size=18,
+                color='#022f40',
+                family='Arial, sans-serif'
+            ),
+            x=0.5,
+            xanchor='center'
+        ),
         paper_bgcolor=offWhite,
         legend=dict(
             orientation='v',
@@ -196,7 +193,7 @@ def updateQuakePie(region):
             bordercolor='rgba(2, 47, 64, 100)',
             borderwidth=0
         ),
-        margin=dict(t=0, b=100, l=10, r=10)
+        margin=dict(t=120, b=100, l=10, r=10)
     )
 
     return fig, region
