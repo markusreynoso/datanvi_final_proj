@@ -153,7 +153,7 @@ app.layout = html.Div(children=[
     Input(component_id='quakeDropdown', component_property='value')
 )
 def updateQuakePie(region):
-    df = pd.read_csv('datasets/earthquake.csv')
+    df = pd.read_csv('https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquake.csv')
     filtered_df = df.loc[df['region'] == region]
     province_counts = filtered_df['province'].value_counts()
     top_provinces = province_counts.nlargest(3)
@@ -210,7 +210,7 @@ def updateQuakePie(region):
     Input(component_id='quakeDropdown', component_property='value')
 )
 def updateQuakeHist(region):
-    df = pd.read_csv('datasets/earthquake.csv')
+    df = pd.read_csv('https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquake.csv')
     df.sort_values('region', ascending=True)
     fig = px.histogram(
         df.loc[df['region'] == region]['magnitude'],
@@ -244,7 +244,7 @@ def updateQuakeHist(region):
     Input(component_id='quakeDropdown', component_property='value')
 )
 def updateQuakeLine(region):
-    df = pd.read_csv('datasets/earthquake.csv')
+    df = pd.read_csv('https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquake.csv')
     df = df.loc[df['region'] == region]
     df.groupby('date_time_ph')['magnitude'].count().reset_index()
 
