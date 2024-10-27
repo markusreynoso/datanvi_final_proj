@@ -278,7 +278,7 @@ def updateHousePie(region):
         values=top_provinces.values,
         hole=0.8,
         color=top_provinces.index,
-        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#1B4079'],
+        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#d6fff6'],
     )
 
     fig.update_layout(
