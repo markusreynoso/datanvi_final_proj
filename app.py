@@ -53,6 +53,11 @@ app.layout = html.Div(children=[
 
     html.Div(className='spacer'),
 
+    html.Div(children=[
+        html.H2(className='sectionTitle', children='Map - '),
+        html.H2(id='mapRegionText', className='dynamicText'),
+    ]),
+
     html.Center(
         html.Div(
             id='mapDiv',
@@ -64,16 +69,43 @@ app.layout = html.Div(children=[
         )
     ),
 
-    html.Div(
-        id='mapControlsDiv',
-        children=[
-            html.Div(
-                id='mapQuakeControlsDiv',
-                children='placeholder'
-            ),
+    html.Center(
+        html.Div(
+            id='mapControlsDiv',
+            children=[
+                html.Div(
+                    id='mapQuakeControlsDiv',
+                    className='mapControlPanel',
+                    children=[
+                        html.H3(
+                            className='mapPanelTitle',
+                            children='Earthquakes'
+                        ),
 
-    ]
-    ),
+                        dcc.Dropdown(
+                            id='mapQuakePanelDrop',
+                            className='mapPanelDrop',
+                            options=regionOptions
+                        )
+                    ]
+                ),
+
+                html.Div(
+                    id='mapHouseControlsDiv',
+                    className='mapControlPanel',
+                    children='placeholder'
+                ),
+
+                html.Div(
+                    id='mapConflictControlsDiv',
+                    className='mapControlPanel',
+                    children='placeholder'
+                )
+
+            ]
+        )
+    )
+    ,
 
     html.Div(children=[
         html.H2(className='sectionTitle', children='Earthquakes - '),
