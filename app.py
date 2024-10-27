@@ -27,8 +27,9 @@ regionOptions = [
     {'label': 'Region XVIII', 'value': 'Region XVIII'}
 ]
 offWhite = "#ebebeb"
+offWhite2 = "#fafafa"
 teal = "#d6fff6"
-darkColor = "#022f40"
+darkGreen = "#022f40"
 midBlue = "4dccbd"
 brightRed = "#d52941"
 salmon = "#ff8484"
@@ -165,8 +166,8 @@ app.layout = html.Div(children=[
                             id='quakeDivTopRight',
                             children=
                                 dcc.Graph(
-                                id='quakeHist',
-                                figure={}
+                                    id='quakeHist',
+                                    figure={}
                             )
                         )
                     ]
@@ -183,7 +184,8 @@ app.layout = html.Div(children=[
         )
     ),
 
-    html.Div(id='spacer'),
+    html.Br(),
+    html.Br(),
 
     html.Div(
         children=[
@@ -284,13 +286,13 @@ def updateHousePie(region):
             text=f'Top 3 Areas with the Most Houses<br>{region}',
             font=dict(
                 size=18,
-                color='#022f40',
+                color=offWhite,
                 family='Arial, sans-serif'
             ),
             x=0.5,
             xanchor='center'
         ),
-        paper_bgcolor=offWhite,
+        paper_bgcolor=darkGreen,
         legend=dict(
             orientation='v',
             yanchor='middle',
@@ -300,7 +302,8 @@ def updateHousePie(region):
             itemsizing='constant',
             bgcolor='rgba(255, 255, 255, 0)',
             bordercolor='rgba(2, 47, 64, 100)',
-            borderwidth=0
+            borderwidth=0,
+            font=dict(color=offWhite)
         ),
         margin=dict(t=120, b=100, l=10, r=10)
     )
@@ -311,15 +314,14 @@ def updateHousePie(region):
     )
     return fig, region
 
+
 @app.callback(
 Output(component_id='houseBoxplot', component_property='figure'),
     Input(component_id='houseDropdown', component_property='value')
 )
-
 def updateHouseBoxplot(region):
     df = pd.read_csv(housingDataset)
     df = df.loc[df['region'] == region]
-
 
     fig = px.box(
         df,
@@ -328,12 +330,12 @@ def updateHouseBoxplot(region):
     )
 
     fig.update_layout(
-        paper_bgcolor=offWhite,
+        paper_bgcolor=offWhite2,
         title=dict(
             text=f"{region} - House Prices Distribution",
             font=dict(
                 size=20,
-                color='#022f40',
+                color=darkGreen,
                 family='Arial',
             ),
             x=0.5,
@@ -342,7 +344,7 @@ def updateHouseBoxplot(region):
     )
 
     fig.update_layout(
-        paper_bgcolor=offWhite,
+        paper_bgcolor=offWhite2,
         yaxis_title="Average Price of a House",
         xaxis_title="Provinces",
         xaxis=dict(
@@ -391,23 +393,21 @@ def updateQuakePie(region):
         values=top_provinces.values,
         hole=0.8,
         color=top_provinces.index,
-        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#1B4079'],
+        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#d6fff6'],
     )
-
-
 
     fig.update_layout(
         title=dict(
             text=f'Top 3 Areas with the Most Occurrences<br>{region}',
             font=dict(
                 size=18,
-                color='#022f40',
+                color=offWhite,
                 family='Arial, sans-serif'
             ),
             x=0.5,
             xanchor='center'
         ),
-        paper_bgcolor=offWhite,
+        paper_bgcolor=darkGreen,
         legend=dict(
             orientation='v',
             yanchor='middle',
@@ -417,7 +417,8 @@ def updateQuakePie(region):
             itemsizing='constant',
             bgcolor='rgba(255, 255, 255, 0)',
             bordercolor='rgba(2, 47, 64, 100)',
-            borderwidth=0
+            borderwidth=0,
+            font=dict(color=offWhite)
         ),
         margin=dict(t=120, b=100, l=10, r=10)
     )
@@ -443,12 +444,12 @@ def updateQuakeHist(region):
     )
 
     fig.update_layout(
-        paper_bgcolor=offWhite,
+        paper_bgcolor=offWhite2,
         title=dict(
             text=f"{region} - Earthquake Magnitude Distribution",
             font=dict(
                 size=20,
-                color=darkColor,
+                color=darkGreen,
                 family='Arial',
             ),
             x=0.5,
@@ -479,7 +480,7 @@ def updateQuakeLine(region):
     )
 
     fig.update_layout(
-        paper_bgcolor=offWhite,
+        paper_bgcolor=offWhite2,
         yaxis_title="Number of Earthquakes",
         xaxis_title="Year",
         xaxis=dict(
