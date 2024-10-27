@@ -81,7 +81,7 @@ app.layout = html.Div(children=[
                             ]
                         ),
                         html.Div(
-                            id='quakeTopRightDiv',
+                            id='quakeDivTopRight',
                             children=
                                 dcc.Graph(
                                 id='quakeHist',
@@ -91,11 +91,10 @@ app.layout = html.Div(children=[
                     ]
                 ),
                 html.Div(
-                    style={'background-color': 'green', 'height': '55%'},
+                    id='quakeDivBottom',
                     children=[
                         dcc.Graph(
                             id='quakeLine',
-                            style={'width': '100%', 'height': '100%'}
                         )
                     ]
                 )
@@ -142,15 +141,13 @@ app.layout = html.Div(children=[
 
     html.Center(
         html.Div(
-            style={'background-color': 'red', 'height': '1000px', 'width': '90%', 'display': 'flex',
-                   'flex-direction': 'column'},
+            id='houseBigDiv',
             children=[
                 html.Div(
-                    style={'background-color': 'blue', 'height': '45%', 'display': 'flex', 'flex-direction': 'row'},
+                    id='houseDivTop',
                     children=[
                         html.Div(
-                            style={'background-color': 'yellow', 'width': '40%', 'display': 'flex',
-                                   'justify-content': 'center', 'align-items': 'center'},
+                            id='houseDivTopLeft',
                             children=[
                                 dcc.Graph(
                                     id='housePie',
@@ -159,20 +156,24 @@ app.layout = html.Div(children=[
                                 )
                             ]
                         ),
-                        dcc.Graph(
-                            id='houseBoxplot',
-                            style={'width': '100%', 'height': '100%'},
-                            figure={}
+                        html.Div(
+                            id='houseDivTopRight',
+                            children=
+                                [dcc.Graph(
+                                id='houseBoxplot',
+                                figure={}
+                                )
+                            ]
                         )
                     ]
                 ),
                 html.Div(
-                    style={'background-color': 'green', 'height': '55%'},
+                    id='houseDivBottom',
                     children=[
-                        # dcc.Graph(
-                        #     id='houseLine',
-                        #     style={'width': '100%', 'height': '100%'}
-                        # )
+                        dcc.Graph(
+                            id='houseLine',
+                            style={}
+                        )
                     ]
                 )
             ]
