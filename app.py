@@ -32,18 +32,13 @@ app.layout = html.Div(children=[
     html.Div(className='spacer'),
 
     html.Div(children=[
-        html.H2('Earthquakes - ', style={'display': 'inline-block'}),
-        html.H2(id='quakeRegionText', style={'display': 'inline-block', 'margin-left': '15px'}),
+        html.H2(className='sectionTitle', children='Earthquakes - '),
+        html.H2(id='quakeRegionText', className='dynamicText'),
     ]),
 
     dcc.Dropdown(
         id='quakeDropdown',
         className='regionDropdown',
-        style={
-            'font-family': 'Arial, sans-serif',
-            'font-size': '12px',
-            'color': '#022f40'
-        },
         options=[
             {'label': 'Region I - Ilocos Region', 'value': 'Region I'},
             {'label': 'Region II - Cagayan Valley', 'value': 'Region II'},
@@ -70,15 +65,13 @@ app.layout = html.Div(children=[
 
     html.Center(
         html.Div(
-            style={'background-color': 'red', 'height': '1000px', 'width': '90%', 'display': 'flex',
-                   'flex-direction': 'column'},
+            id='quakeBigDiv',
             children=[
                 html.Div(
-                    style={'background-color': 'blue', 'height': '45%', 'display': 'flex', 'flex-direction': 'row'},
+                    id='quakeDivTop',
                     children=[
                         html.Div(
-                            style={'background-color': 'yellow', 'width': '40%', 'display': 'flex',
-                                   'justify-content': 'center', 'align-items': 'center'},
+                            id='quakeDivTopLeft',
                             children=[
                                 dcc.Graph(
                                     id='quakePie',
@@ -87,10 +80,13 @@ app.layout = html.Div(children=[
                                 )
                             ]
                         ),
-                        dcc.Graph(
-                            id='quakeHist',
-                            style={'width': '100%', 'height': '100%'},
-                            figure={}
+                        html.Div(
+                            id='quakeTopRightDiv',
+                            children=
+                                dcc.Graph(
+                                id='quakeHist',
+                                figure={}
+                            )
                         )
                     ]
                 ),
@@ -110,8 +106,8 @@ app.layout = html.Div(children=[
     html.Div(id='spacer'),
 
     html.Div(children=[
-        html.H2('Houses - ', style={'display': 'inline-block'}),
-        html.H2(id='houseRegionText', style={'display': 'inline-block', 'margin-left': '15px'}),
+        html.H2(className='sectionTitle', children='Houses - '),
+        html.H2(id='houseRegionText', className='sectionTitle'),
     ]),
 
     dcc.Dropdown(
