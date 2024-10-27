@@ -52,6 +52,23 @@ h2 {
     margin-bottom: 20px;
 }
 
+#mapDiv{
+    background-color: var(--bright-red);
+    width: 80%;
+}
+
+#mapControlsDiv{
+    background-color:yellow;
+    display: flex;
+    flex-direction: row;
+    width:80%;
+    height:50vh;
+}
+
+#mapQuakeControlsDiv{
+
+}
+
 .sectionTitle{
     display: inline-block;
 }

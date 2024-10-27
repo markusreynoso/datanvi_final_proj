@@ -3,7 +3,29 @@ from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
 
+housingDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/newPH_housing.csv'
+earthquakeDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquake.csv'
 introParagraph = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at pharetra ante. Vestibulum ut sapien id nibh efficitur pulvinar id in leo. Nullam aliquet, velit at fermentum dictum, neque massa vehicula velit, ac scelerisque nunc mi quis eros. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Mauris finibus volutpat congue. Cras ac gravida dolor. Praesent sed accumsan orci. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Ut porttitor nibh sem, vitae varius orci efficitur eget. Proin tincidunt, nisi et molestie congue, nisi nibh dignissim risus, in malesuada erat massa eu dolor. Vestibulum a quam at libero scelerisque tempus.'
+regionOptions = [
+    {'label': 'Region I - Ilocos Region', 'value': 'Region I'},
+    {'label': 'Region II - Cagayan Valley', 'value': 'Region II'},
+    {'label': 'Region III - Central Luzon', 'value': 'Region III'},
+    {'label': 'Region IV-A - CALABARZON', 'value': 'Region IV-A'},
+    {'label': 'Region IV-B MIMAROPA', 'value': 'Region IV-B'},
+    {'label': 'Region V - Bicol Region', 'value': 'Region V'},
+    {'label': 'Region VI - Western Visayas', 'value': 'Region VI'},
+    {'label': 'Region VII - Central Visayas', 'value': 'Region VII'},
+    {'label': 'Region VIII - Eastern Visayas', 'value': 'Region VIII'},
+    {'label': 'Region IX - Zamboanga Peninsula', 'value': 'Region IX'},
+    {'label': 'Region X - Northern Mindanao', 'value': 'Region X'},
+    {'label': 'Region XI - Davao Region', 'value': 'Region XI'},
+    {'label': 'Region XII - SOCCSKSARGEN', 'value': 'Region XII'},
+    {'label': 'Region XIII - Caraga', 'value': 'Region XIII'},
+    {'label': 'NCR - National Capital Region', 'value': 'NCR'},
+    {'label': 'CAR - Cordillera Administrative Region', 'value': 'CAR'},
+    {'label': 'BARMM - Bangsamoro Autonomous Region in Muslim Mindanao', 'value': 'BARMM'},
+    {'label': 'Region XVIII', 'value': 'Region XVIII'}
+]
 offWhite = "#ebebeb"
 teal = "#d6fff6"
 darkColor = "#022f40"
@@ -31,6 +53,28 @@ app.layout = html.Div(children=[
 
     html.Div(className='spacer'),
 
+    html.Center(
+        html.Div(
+            id='mapDiv',
+            children=[
+                dcc.Graph(
+                    id='mainMap'
+                )
+            ]
+        )
+    ),
+
+    html.Div(
+        id='mapControlsDiv',
+        children=[
+            html.Div(
+                id='mapQuakeControlsDiv',
+                children='placeholder'
+            ),
+
+    ]
+    ),
+
     html.Div(children=[
         html.H2(className='sectionTitle', children='Earthquakes - '),
         html.H2(id='quakeRegionText', className='dynamicText'),
@@ -39,26 +83,7 @@ app.layout = html.Div(children=[
     dcc.Dropdown(
         id='quakeDropdown',
         className='regionDropdown',
-        options=[
-            {'label': 'Region I - Ilocos Region', 'value': 'Region I'},
-            {'label': 'Region II - Cagayan Valley', 'value': 'Region II'},
-            {'label': 'Region III - Central Luzon', 'value': 'Region III'},
-            {'label': 'Region IV-A - CALABARZON', 'value': 'Region IV-A'},
-            {'label': 'Region IV-B MIMAROPA', 'value': 'Region IV-B'},
-            {'label': 'Region V - Bicol Region', 'value': 'Region V'},
-            {'label': 'Region VI - Western Visayas', 'value': 'Region VI'},
-            {'label': 'Region VII - Central Visayas', 'value': 'Region VII'},
-            {'label': 'Region VIII - Eastern Visayas', 'value': 'Region VIII'},
-            {'label': 'Region IX - Zamboanga Peninsula', 'value': 'Region IX'},
-            {'label': 'Region X - Northern Mindanao', 'value': 'Region X'},
-            {'label': 'Region XI - Davao Region', 'value': 'Region XI'},
-            {'label': 'Region XII - SOCCSKSARGEN', 'value': 'Region XII'},
-            {'label': 'Region XIII - Caraga', 'value': 'Region XIII'},
-            {'label': 'NCR - National Capital Region', 'value': 'NCR'},
-            {'label': 'CAR - Cordillera Administrative Region', 'value': 'CAR'},
-            {'label': 'BARMM - Bangsamoro Autonomous Region in Muslim Mindanao', 'value': 'BARMM'},
-            {'label': 'Region XVIII', 'value': 'Region XVIII'}
-        ],
+        options=regionOptions,
     ),
 
     html.Br(),
@@ -117,26 +142,7 @@ app.layout = html.Div(children=[
             'font-size': '12px',
             'color': '#022f40'
         },
-        options=[
-            {'label': 'Region I - Ilocos Region', 'value': 'Region I'},
-            {'label': 'Region II - Cagayan Valley', 'value': 'Region II'},
-            {'label': 'Region III - Central Luzon', 'value': 'Region III'},
-            {'label': 'Region IV-A - CALABARZON', 'value': 'Region IV-A'},
-            {'label': 'Region IV-B MIMAROPA', 'value': 'Region IV-B'},
-            {'label': 'Region V - Bicol Region', 'value': 'Region V'},
-            {'label': 'Region VI - Western Visayas', 'value': 'Region VI'},
-            {'label': 'Region VII - Central Visayas', 'value': 'Region VII'},
-            {'label': 'Region VIII - Eastern Visayas', 'value': 'Region VIII'},
-            {'label': 'Region IX - Zamboanga Peninsula', 'value': 'Region IX'},
-            {'label': 'Region X - Northern Mindanao', 'value': 'Region X'},
-            {'label': 'Region XI - Davao Region', 'value': 'Region XI'},
-            {'label': 'Region XII - SOCCSKSARGEN', 'value': 'Region XII'},
-            {'label': 'Region XIII - Caraga', 'value': 'Region XIII'},
-            {'label': 'NCR - National Capital Region', 'value': 'NCR'},
-            {'label': 'CAR - Cordillera Administrative Region', 'value': 'CAR'},
-            {'label': 'BARMM - Bangsamoro Autonomous Region in Muslim Mindanao', 'value': 'BARMM'},
-            {'label': 'Region XVIII', 'value': 'Region XVIII'}
-        ],
+        options=regionOptions,
     ),
 
     html.Center(
@@ -192,7 +198,7 @@ app.layout = html.Div(children=[
     Input(component_id='houseDropdown', component_property='value')
 )
 def updateHousePie(region):
-    df = pd.read_csv('https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/newPH_housing.csv')
+    df = pd.read_csv(housingDataset)
     filtered_df = df.loc[df['region'] == region]
     province_counts = filtered_df['province'].value_counts()
     top_provinces = province_counts.nlargest(3)
@@ -249,7 +255,7 @@ Output(component_id='houseBoxplot', component_property='figure'),
 )
 
 def updateHouseBoxplot(region):
-    df = pd.read_csv('https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/newPH_housing.csv')
+    df = pd.read_csv(housingDataset)
     df = df.loc[df['region'] == region]
 
 
@@ -307,7 +313,7 @@ def updateHouseBoxplot(region):
     Input(component_id='quakeDropdown', component_property='value')
 )
 def updateQuakePie(region):
-    df = pd.read_csv('https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquake.csv')
+    df = pd.read_csv(earthquakeDataset)
     filtered_df = df.loc[df['region'] == region]
     province_counts = filtered_df['province'].value_counts()
     top_provinces = province_counts.nlargest(3)
@@ -366,7 +372,7 @@ def updateQuakePie(region):
     Input(component_id='quakeDropdown', component_property='value')
 )
 def updateQuakeHist(region):
-    df = pd.read_csv('https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquake.csv')
+    df = pd.read_csv(earthquakeDataset)
     df.sort_values('region', ascending=True)
     fig = px.histogram(
         df.loc[df['region'] == region]['magnitude'],
@@ -400,7 +406,7 @@ def updateQuakeHist(region):
     Input(component_id='quakeDropdown', component_property='value')
 )
 def updateQuakeLine(region):
-    df = pd.read_csv('https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquake.csv')
+    df = pd.read_csv(earthquakeDataset)
     df = df.loc[df['region'] == region]
     df.groupby('date_time_ph')['magnitude'].count().reset_index()
 
