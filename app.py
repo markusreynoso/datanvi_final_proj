@@ -2,6 +2,7 @@ from dash import Dash, html, dcc
 from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
+import dash_daq as daq
 
 housingDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/newPH_housing.csv'
 earthquakeDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquake.csv'
@@ -78,6 +79,13 @@ app.layout = html.Div(children=[
                             id='mapQuakePanelDrop',
                             className='mapPanelDrop',
                             options=regionOptions
+                        ),
+
+                        daq.ToggleSwitch(
+                            className='mapPanelSwitch',
+                            id='mapQuakePanelSwitch',
+                            value=False,
+                            color='#4dccbd'
                         )
                     ]
                 ),
@@ -95,6 +103,13 @@ app.layout = html.Div(children=[
                             id='mapHousePanelDrop',
                             className='mapPanelDrop',
                             options=regionOptions
+                        ),
+
+                        daq.ToggleSwitch(
+                            className='mapPanelSwitch',
+                            id='mapHousePanelSwitch',
+                            value=False,
+                            color='#4dccbd'
                         )
                     ]
                 ),
@@ -112,6 +127,13 @@ app.layout = html.Div(children=[
                             id='mapConflictPanelDrop',
                             className='mapPanelDrop',
                             options=regionOptions
+                        ),
+
+                        daq.ToggleSwitch(
+                            className='mapPanelSwitch',
+                            id='mapConflictPanelSwitch',
+                            value=False,
+                            color='#4dccbd'
                         )
                     ]
                 )
