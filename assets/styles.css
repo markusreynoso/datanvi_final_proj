@@ -5,6 +5,8 @@
     --mid-blue: #4dccbd;
     --bright-red: #d52941;
     --salmon: #ff8484;
+    --african-violet: #B18FCF;
+    --yale: #1B4079
 }
 
 
@@ -119,6 +121,7 @@ h2 {
     font-family: Arial, sans-serif;
     font-size: 12px;
     color: #022f40;
+    text-align:left;
 }
 
 #quakeBigDiv{

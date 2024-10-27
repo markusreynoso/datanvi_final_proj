@@ -30,8 +30,10 @@ offWhite = "#ebebeb"
 teal = "#d6fff6"
 darkColor = "#022f40"
 midBlue = "4dccbd"
-brightRed = "d52941"
-salmon = "ff8484"
+brightRed = "#d52941"
+salmon = "#ff8484"
+africanViolet = '#B18FCF'
+yale = '#1B4079'
 
 app = Dash(__name__)
 
@@ -47,27 +49,16 @@ app.layout = html.Div(children=[
         html.Span('Conflicts', id='conflictsTitle')
     ]),
 
-    html.Div(children=[
-        html.P(introParagraph)
-    ]),
+    html.Div(children=html.P(introParagraph)),
 
     html.Div(className='spacer'),
 
-    html.Div(children=[
-        html.H2(className='sectionTitle', children='Map - '),
-        html.H2(id='mapRegionText', className='dynamicText'),
-    ]),
+    html.Div(children=html.Center(html.H2(className='sectionTitle', children='Map'))),
 
-    html.Center(
-        html.Div(
-            id='mapDiv',
-            children=[
-                dcc.Graph(
-                    id='mainMap'
-                )
-            ]
-        )
-    ),
+    html.Br(),
+    html.Br(),
+
+    html.Center(html.Div(id='mapDiv', children=[dcc.Graph(id='mainMap')])),
 
     html.Center(
         html.Div(
@@ -93,13 +84,35 @@ app.layout = html.Div(children=[
                 html.Div(
                     id='mapHouseControlsDiv',
                     className='mapControlPanel',
-                    children='placeholder'
+                    children=[
+                        html.H3(
+                            className='mapPanelTitle',
+                            children='Houses'
+                        ),
+
+                        dcc.Dropdown(
+                            id='mapHousePanelDrop',
+                            className='mapPanelDrop',
+                            options=regionOptions
+                        )
+                    ]
                 ),
 
                 html.Div(
                     id='mapConflictControlsDiv',
                     className='mapControlPanel',
-                    children='placeholder'
+                    children=[
+                        html.H3(
+                            className='mapPanelTitle',
+                            children='Conflicts'
+                        ),
+
+                        dcc.Dropdown(
+                            id='mapConflictPanelDrop',
+                            className='mapPanelDrop',
+                            options=regionOptions
+                        )
+                    ]
                 )
 
             ]
@@ -107,17 +120,28 @@ app.layout = html.Div(children=[
     )
     ,
 
-    html.Div(children=[
-        html.H2(className='sectionTitle', children='Earthquakes - '),
-        html.H2(id='quakeRegionText', className='dynamicText'),
-    ]),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
 
-    dcc.Dropdown(
-        id='quakeDropdown',
-        className='regionDropdown',
-        options=regionOptions,
+    html.Div(
+        children=[
+            html.Center(
+                children=[
+                    html.H2(className='sectionTitle', children='Earthquakes - '),
+                    html.H2(id='quakeRegionText', className='dynamicText'),
+                    dcc.Dropdown(
+                        id='quakeDropdown',
+                        className='regionDropdown',
+                        options=regionOptions,
+                    )
+                ]
+            )
+        ]
     ),
 
+    html.Br(),
     html.Br(),
 
     html.Center(
@@ -161,21 +185,24 @@ app.layout = html.Div(children=[
 
     html.Div(id='spacer'),
 
-    html.Div(children=[
-        html.H2(className='sectionTitle', children='Houses - '),
-        html.H2(id='houseRegionText', className='sectionTitle'),
-    ]),
-
-    dcc.Dropdown(
-        id='houseDropdown',
-        className='regionDropdown',
-        style={
-            'font-family': 'Arial, sans-serif',
-            'font-size': '12px',
-            'color': '#022f40'
-        },
-        options=regionOptions,
+    html.Div(
+        children=[
+            html.Center(
+                children=[
+                    html.H2(className='sectionTitle', children='Houses - '),
+                    html.H2(id='houseRegionText', className='sectionTitle'),
+                    dcc.Dropdown(
+                        id='houseDropdown',
+                        className='regionDropdown',
+                        options=regionOptions,
+                    )
+                ]
+            )
+        ]
     ),
+
+    html.Br(),
+    html.Br(),
 
     html.Center(
         html.Div(
@@ -196,8 +223,8 @@ app.layout = html.Div(children=[
                         ),
                         html.Div(
                             id='houseDivTopRight',
-                            children=
-                                [dcc.Graph(
+                            children=[
+                                dcc.Graph(
                                 id='houseBoxplot',
                                 figure={}
                                 )
@@ -223,7 +250,10 @@ app.layout = html.Div(children=[
     html.Br(),
     html.Br(),
 ])
+
 # ---------------------------------------------------------------------------------------------------------------------
+
+
 @app.callback(
     [Output(component_id='housePie', component_property='figure'),
      Output(component_id='houseRegionText', component_property='children'), ],
@@ -246,7 +276,7 @@ def updateHousePie(region):
         values=top_provinces.values,
         hole=0.8,
         color=top_provinces.index,
-        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#022f40'],
+        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#1B4079'],
     )
 
     fig.update_layout(
@@ -361,7 +391,7 @@ def updateQuakePie(region):
         values=top_provinces.values,
         hole=0.8,
         color=top_provinces.index,
-        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#022f40'],
+        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#1B4079'],
     )
 
 
@@ -409,7 +439,7 @@ def updateQuakeHist(region):
     fig = px.histogram(
         df.loc[df['region'] == region]['magnitude'],
         x='magnitude',
-        color_discrete_sequence=['#ff8484'],
+        color_discrete_sequence=[africanViolet],
     )
 
     fig.update_layout(
@@ -418,7 +448,7 @@ def updateQuakeHist(region):
             text=f"{region} - Earthquake Magnitude Distribution",
             font=dict(
                 size=20,
-                color='#022f40',
+                color=darkColor,
                 family='Arial',
             ),
             x=0.5,
@@ -465,7 +495,7 @@ def updateQuakeLine(region):
 
     fig.update_traces(
         hovertemplate="<b>Year:</b> %{x}<br><b>Count:</b> %{y}<extra></extra>",
-        line=dict(color='#ff8484')
+        line=dict(color=africanViolet)
     )
 
     return fig
