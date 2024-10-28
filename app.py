@@ -277,7 +277,7 @@ app.layout = html.Div(children=[
                         html.Div(
                             id='houseDivBottomLeft',
                             children=[
-                                    dcc.Graph()
+                                        dcc.Graph()
                             ]
                         ),
 
@@ -329,7 +329,7 @@ def updateHousePie(region):
 
     fig.update_layout(
         title=dict(
-            text=f'Top 3 Areas with the Most Houses<br>{region}',
+            text=f'Top 3 Areas with the Most Houses<br>',
             font=dict(
                 size=18,
                 color=offWhite,
@@ -378,7 +378,7 @@ def updateHouseBoxplot(region):
     fig.update_layout(
         paper_bgcolor=offWhite2,
         title=dict(
-            text=f"{region} - House Prices Distribution",
+            text=f"House Prices Distribution",
             font=dict(
                 size=20,
                 color=darkGreen,
@@ -444,7 +444,7 @@ def updateQuakePie(region):
 
     fig.update_layout(
         title=dict(
-            text=f'Top 3 Areas with the Most Occurrences<br>{region}',
+            text=f'Top 3 Areas with the Most Earthquakes<br>',
             font=dict(
                 size=18,
                 color=offWhite,
@@ -492,7 +492,7 @@ def updateQuakeHist(region):
     fig.update_layout(
         paper_bgcolor=offWhite2,
         title=dict(
-            text=f"{region} - Earthquake Magnitude Distribution",
+            text=f"Earthquake Magnitude Distribution",
             font=dict(
                 size=20,
                 color=darkGreen,
