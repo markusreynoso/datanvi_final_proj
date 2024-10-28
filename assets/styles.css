@@ -37,7 +37,7 @@ h1 {
     font-size: 70pt;
     font-family: Arial, sans-serif;
     letter-spacing: -5px;
-    line-height: 0.9;
+    line-height: 1;
     color: var(--dark-color);
     margin-left: 100px;
     margin-top: 100px;
@@ -57,7 +57,7 @@ h2 {
 #mapDiv{
     background-color: var(--bright-red);
     width: 80%;
-    margin-bottom:30px;
+    margin:30px;
     border-radius:30px;
     overflow-x:hidden;
     overflow-y:hidden;
@@ -67,8 +67,8 @@ h2 {
     display: flex;
     flex-direction: row;
     width:80%;
-    height:50vh;
-    justify-content: space-between;
+    height:45vh;
+    justify-content: space-evenly;
 }
 
 
@@ -77,6 +77,9 @@ h2 {
     background-color: var(--dark-color);
     border-radius: 30px;
     padding: 10px;
+    position: relative;
+    display:flex;
+    flex-direction:column;
 }
 
 .mapPanelTitle{
@@ -92,23 +95,39 @@ h2 {
     width: 95%;
     white-space: nowrap;
     text-align:left;
+    margin-bottom: 10px;
 }
 
 .mapPanelSwitch{
     padding: 10px;
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-5%);
 }
 
-.mapPanelSlider{
+#mapQuakePanelTextDiv {
+    width: 95%;
+    text-align: center;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 15px;
+    margin-bottom:10px;
+    font-family:'Arial', sans-serif;
+    color: var(--off-white);
+    font-size:14px;
 }
 
-#mapQuakeControlsDiv{
+
+#mapQuakePanelDrop{
 }
 
-#mapHouseControlsDiv{
+#mapQuakePanelSlider .rc-slider-track{
+    background-color: var(--mid-blue);
+    margin-bottom: 0;
 }
 
-#mapConflictControlsDiv{
-}
 
 .sectionTitle{
     display: inline-block;
@@ -136,7 +155,6 @@ h2 {
 }
 
 #quakeBigDiv{
-    background-color: red,
     height: 1000px;
     width: 90%;
     display: flex;

@@ -43,24 +43,18 @@ app.layout = html.Div(children=[
     html.H1(children=[
         'An Integrated View of',
         html.Br(),
-        'Real Estate Pricing, ',
-        html.Br(),
-        html.Span('Seismic Events,', id='seismicEventsTitle'),
+        'House Pricing, ',
         html.Br(),
         'and ',
-        html.Span('Conflicts', id='conflictsTitle')
+        html.Span('Seismic Events.', id='seismicEventsTitle'),
     ]),
 
     html.Div(children=html.P(introParagraph)),
 
     html.Div(className='spacer'),
 
-    html.Div(children=html.Center(html.H2(className='sectionTitle', children='Map'))),
-
     html.Br(),
     html.Br(),
-
-    html.Center(html.Div(id='mapDiv', children=[dcc.Graph(id='mainMap')])),
 
     html.Center(
         html.Div(
@@ -78,7 +72,25 @@ app.layout = html.Div(children=[
                         dcc.Dropdown(
                             id='mapQuakePanelDrop',
                             className='mapPanelDrop',
-                            options=regionOptions
+                            options=regionOptions,
+                            placeholder='Select region'
+                        ),
+
+                        html.Div(
+                            children='Filter by magnitude',
+                            id='mapQuakePanelTextDiv'
+                        ),
+
+                        dcc.RangeSlider(
+                            0,
+                            10,
+                            0.1,
+                            value=[0, 10],
+                            marks={
+                                0: {'label': '0', 'style': {'color': teal}},
+                                10: {'label': '10', 'style': {'color': salmon}}},
+                            tooltip={'always_visible': False},
+                            id='mapQuakePanelSlider',
                         ),
 
                         daq.ToggleSwitch(
@@ -100,9 +112,34 @@ app.layout = html.Div(children=[
                         ),
 
                         dcc.Dropdown(
-                            id='mapHousePanelDrop',
+                            id='mapHousePanelRegionDrop',
                             className='mapPanelDrop',
-                            options=regionOptions
+                            options=regionOptions,
+                            placeholder='Select region'
+                        ),
+
+                        dcc.Dropdown(
+                            id='mapHousePanelBedDrop',
+                            className='mapPanelDrop',
+                            multi=True,
+                            options=[
+                                {'label': '1', 'value': 1},
+                                {'label': '2', 'value': 2},
+                                {'label': '3', 'value': 3},
+                                {'label': '4+', 'value': 4}],
+                            placeholder='Select number of bedrooms'
+                        ),
+
+                        dcc.Dropdown(
+                            id='mapHousePanelBathDrop',
+                            className='mapPanelDrop',
+                            multi=True,
+                            options=[
+                                {'label': '1', 'value': 1},
+                                {'label': '2', 'value': 2},
+                                {'label': '3', 'value': 3},
+                                {'label': '4+', 'value': 4}],
+                            placeholder='Select number of bathrooms'
                         ),
 
                         daq.ToggleSwitch(
@@ -112,36 +149,12 @@ app.layout = html.Div(children=[
                             color='#4dccbd'
                         )
                     ]
-                ),
-
-                html.Div(
-                    id='mapConflictControlsDiv',
-                    className='mapControlPanel',
-                    children=[
-                        html.H3(
-                            className='mapPanelTitle',
-                            children='Conflicts'
-                        ),
-
-                        dcc.Dropdown(
-                            id='mapConflictPanelDrop',
-                            className='mapPanelDrop',
-                            options=regionOptions
-                        ),
-
-                        daq.ToggleSwitch(
-                            className='mapPanelSwitch',
-                            id='mapConflictPanelSwitch',
-                            value=False,
-                            color='#4dccbd'
-                        )
-                    ]
                 )
 
             ]
         )
-    )
-    ,
+    ),
+    html.Center(html.Div(id='mapDiv', children=[dcc.Graph(id='mainMap')])),
 
     html.Br(),
     html.Br(),
@@ -158,6 +171,7 @@ app.layout = html.Div(children=[
                         id='quakeDropdown',
                         className='regionDropdown',
                         options=regionOptions,
+                        placeholder='Select region'
                     )
                 ]
             )
@@ -219,6 +233,7 @@ app.layout = html.Div(children=[
                         id='houseDropdown',
                         className='regionDropdown',
                         options=regionOptions,
+                        placeholder='Select region'
                     )
                 ]
             )
