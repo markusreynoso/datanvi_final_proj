@@ -6,6 +6,7 @@ import dash_daq as daq
 
 housingDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/newPH_housing.csv'
 earthquakeDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquake.csv'
+avgMerged = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/merged_house_eq.csv'
 introParagraph = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at pharetra ante. Vestibulum ut sapien id nibh efficitur pulvinar id in leo. Nullam aliquet, velit at fermentum dictum, neque massa vehicula velit, ac scelerisque nunc mi quis eros. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Mauris finibus volutpat congue. Cras ac gravida dolor. Praesent sed accumsan orci. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Ut porttitor nibh sem, vitae varius orci efficitur eget. Proin tincidunt, nisi et molestie congue, nisi nibh dignissim risus, in malesuada erat massa eu dolor. Vestibulum a quam at libero scelerisque tempus.'
 regionOptions = [
     {'label': 'Region I - Ilocos Region', 'value': 'Region I'},
@@ -213,16 +214,22 @@ app.layout = html.Div(children=[
                     id='houseDivBottom',
                     children=[
                         html.Div(
-                            id='houseDivBottomLeft',
+                            id='houseDivBottomLeft', # scatterplot
                             children=[
-                                dcc.Graph()
+                                dcc.Graph(
+                                    id='houseScatterplot',
+                                    figure={}
+                                )
                             ]
                         ),
 
                         html.Div(
-                            id='houseDivBottomRight',
+                            id='houseDivBottomRight', # i still dont know
                             children=[
-                                dcc.Graph()
+                                dcc.Graph(
+                                    id = 'mergedBubblechart',
+                                    figure={}
+                                )
                             ]
                         )
                     ]
@@ -294,14 +301,12 @@ app.layout = html.Div(children=[
     html.Br(),
 
 
-
-
     html.Br(),
     html.Br(),
     html.Br(),
 ])
 
-# ---------------------------------------------------------------------------------------------------------------------
+# Wendell part----------------------------------------------------------------------------------------------------------
 
 
 @app.callback(
@@ -374,7 +379,7 @@ def updateHouseBoxplot(region):
     fig = px.box(
         df,
         x = 'province',
-        y = 'price'
+        y = 'price',
     )
 
     fig.update_layout(
@@ -409,7 +414,9 @@ def updateHouseBoxplot(region):
     fig.update_traces(
         hovertemplate="<b>Year:</b> %{x}<br><b>Count:</b> %{y}<extra></extra>",
         line=dict(color='#ff8484'),
-        marker_color ='#ff8484',
+        marker_color = africanViolet,
+        fillcolor = africanViolet,
+        line_color = africanViolet
     )
 
     fig.update_traces(
@@ -418,6 +425,100 @@ def updateHouseBoxplot(region):
     )
 
     return fig
+
+
+@app.callback(
+    Output(component_id='houseScatterplot', component_property='figure'),
+    Input(component_id='houseDropdown', component_property = 'value')
+)
+
+def updateHouseScatterplot(region):
+
+    df = pd.read_csv(housingDataset)
+    df = df.loc[df['region'] == region]
+
+    fig = px.scatter(
+        df,
+        x='land area',
+        y='price'
+    )
+
+
+    fig.update_layout(
+        paper_bgcolor=offWhite2,
+        yaxis_title="Prices",
+        xaxis_title="Land Area of Houses",
+        xaxis=dict(
+            scaleanchor=None,
+            constrain='domain'
+        ),
+        yaxis=dict(
+            scaleanchor=None,
+            constrain='domain'
+        ),
+        margin=dict(l=200, r=200, t=50, b=50),
+    )
+
+    fig.update_traces(
+        hovertemplate="<b>Year:</b> %{x}<br><b>Count:</b> %{y}<extra></extra>",
+        line=dict(color='#ff8484'),
+        marker_color = africanViolet,
+    )
+
+    fig.update_traces(
+        hoverinfo="x+y+text",  # Customize which information to show
+        hovertemplate="<b>Category:</b> %{x}<br><b>Value:</b> %{y}<extra></extra>"
+    )
+
+    return fig
+
+
+@app.callback(
+    Output(component_id='mergedBubblechart', component_property='figure'),
+    Input(component_id='houseDropdown', component_property = 'value')
+)
+
+def updateMergedBubbleChart(region):
+
+    df = pd.read_csv(avgMerged)
+    df = df.loc[df['region'] == region]
+
+    fig = px.scatter(
+        df,
+        x="average_price",
+        y="average_magnitude",
+        size="average_land_area",
+        color="province",
+        hover_data='average_land_area'
+    )
+
+
+    fig.update_layout(
+        paper_bgcolor=offWhite2,
+        yaxis_title="Average Earthquake Magnitude",
+        xaxis_title="Average House Price (PHP)",
+        xaxis=dict(
+            scaleanchor=None,
+            constrain='domain'
+        ),
+        yaxis=dict(
+            scaleanchor=None,
+            constrain='domain'
+        ),
+        margin=dict(l=200, r=200, t=50, b=50),
+    )
+
+
+    fig.update_traces(
+        hoverinfo="x+y+text",  # Customize which information to show
+        hovertemplate="<b>Avg Magnitude:</b> %{y}<br>"
+                      "<b>Avg House Price:</b> %{x}<br>"
+                      "<b>Avg Land Area:</b> %{marker.size}<extra></extra>"
+    )
+
+    return fig
+
+# Wendell part----------------------------------------------------------------------------------------------------------
 
 @app.callback(
     [Output(component_id='quakePie', component_property='figure'),
