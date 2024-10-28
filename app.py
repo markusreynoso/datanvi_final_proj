@@ -274,9 +274,18 @@ app.layout = html.Div(children=[
                 html.Div(
                     id='houseDivBottom',
                     children=[
-                        dcc.Graph(
-                            id='houseLine',
-                            style={}
+                        html.Div(
+                            id='houseDivBottomLeft',
+                            children=[
+                                    dcc.Graph()
+                            ]
+                        ),
+
+                        html.Div(
+                            id='houseDivBottomRight',
+                            children=[
+                                dcc.Graph()
+                            ]
                         )
                     ]
                 )
