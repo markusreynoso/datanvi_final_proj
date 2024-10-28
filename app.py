@@ -165,6 +165,76 @@ app.layout = html.Div(children=[
         children=[
             html.Center(
                 children=[
+                    html.H2(className='sectionTitle', children='Houses - '),
+                    html.H2(id='houseRegionText', className='sectionTitle'),
+                    dcc.Dropdown(
+                        id='houseDropdown',
+                        className='regionDropdown',
+                        options=regionOptions,
+                        placeholder='Select region'
+                    )
+                ]
+            )
+        ]
+    ),
+
+    html.Br(),
+    html.Br(),
+
+    html.Center(
+        html.Div(
+            id='houseBigDiv',
+            children=[
+                html.Div(
+                    id='houseDivTop',
+                    children=[
+                        html.Div(
+                            id='houseDivTopLeft',
+                            children=[
+                                dcc.Graph(
+                                    id='housePie',
+                                    style={'width': '100%', 'height': '100%'},
+                                    figure={}
+                                )
+                            ]
+                        ),
+                        html.Div(
+                            id='houseDivTopRight',
+                            children=[
+                                dcc.Graph(
+                                    id='houseBoxplot',
+                                    figure={}
+                                )
+                            ]
+                        )
+                    ]
+                ),
+                html.Div(
+                    id='houseDivBottom',
+                    children=[
+                        html.Div(
+                            id='houseDivBottomLeft',
+                            children=[
+                                dcc.Graph()
+                            ]
+                        ),
+
+                        html.Div(
+                            id='houseDivBottomRight',
+                            children=[
+                                dcc.Graph()
+                            ]
+                        )
+                    ]
+                )
+            ]
+        )
+    ),
+
+    html.Div(
+        children=[
+            html.Center(
+                children=[
                     html.H2(className='sectionTitle', children='Earthquakes - '),
                     html.H2(id='quakeRegionText', className='dynamicText'),
                     dcc.Dropdown(
@@ -223,75 +293,7 @@ app.layout = html.Div(children=[
     html.Br(),
     html.Br(),
 
-    html.Div(
-        children=[
-            html.Center(
-                children=[
-                    html.H2(className='sectionTitle', children='Houses - '),
-                    html.H2(id='houseRegionText', className='sectionTitle'),
-                    dcc.Dropdown(
-                        id='houseDropdown',
-                        className='regionDropdown',
-                        options=regionOptions,
-                        placeholder='Select region'
-                    )
-                ]
-            )
-        ]
-    ),
 
-    html.Br(),
-    html.Br(),
-
-    html.Center(
-        html.Div(
-            id='houseBigDiv',
-            children=[
-                html.Div(
-                    id='houseDivTop',
-                    children=[
-                        html.Div(
-                            id='houseDivTopLeft',
-                            children=[
-                                dcc.Graph(
-                                    id='housePie',
-                                    style={'width': '100%', 'height': '100%'},
-                                    figure={}
-                                )
-                            ]
-                        ),
-                        html.Div(
-                            id='houseDivTopRight',
-                            children=[
-                                dcc.Graph(
-                                id='houseBoxplot',
-                                figure={}
-                                )
-                            ]
-                        )
-                    ]
-                ),
-                html.Div(
-                    id='houseDivBottom',
-                    children=[
-                        html.Div(
-                            id='houseDivBottomLeft',
-                            children=[
-                                        dcc.Graph()
-                            ]
-                        ),
-
-                        html.Div(
-                            id='houseDivBottomRight',
-                            children=[
-                                dcc.Graph()
-                            ]
-                        )
-                    ]
-                )
-            ]
-        )
-    ),
 
 
     html.Br(),
