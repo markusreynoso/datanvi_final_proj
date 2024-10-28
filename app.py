@@ -30,7 +30,7 @@ regionOptions = [
 ]
 offWhite = "#ebebeb"
 offWhite2 = "#fafafa"
-teal = "#d6fff6"
+gamboge = "#EFA00B"
 darkGreen = "#022f40"
 midBlue = "4dccbd"
 brightRed = "#d52941"
@@ -88,7 +88,7 @@ app.layout = html.Div(children=[
                             0.1,
                             value=[0, 10],
                             marks={
-                                0: {'label': '0', 'style': {'color': teal}},
+                                0: {'label': '0', 'style': {'color': gamboge}},
                                 10: {'label': '10', 'style': {'color': salmon}}},
                             tooltip={'always_visible': False},
                             id='mapQuakePanelSlider',
@@ -331,7 +331,7 @@ def updateHousePie(region):
         values=top_provinces.values,
         hole=0.8,
         color=top_provinces.index,
-        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#d6fff6'],
+        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#EFA00B'],
     )
 
     fig.update_layout(
@@ -374,12 +374,30 @@ Output(component_id='houseBoxplot', component_property='figure'),
 )
 def updateHouseBoxplot(region):
     df = pd.read_csv(housingDataset)
-    df = df.loc[df['region'] == region]
+    filtered_df = df.loc[df['region'] == region]
+    province_counts = filtered_df['province'].value_counts()
+    top_provinces = province_counts.nlargest(3)
+    others_count = province_counts[~province_counts.index.isin(top_provinces.index)].sum()
+    df1 = filtered_df.copy()
+    df1['coloring'] = df1['province'].apply(lambda x: x if x in top_provinces.index.tolist() else 'Others')
+
+    if others_count > 0:
+        others_series = pd.Series({'Others': others_count})
+        top_provinces = pd.concat([top_provinces, others_series])
+
+    top_provinces = top_provinces.reset_index(name='count').sort_values('count', ascending=False)
+    top_provinces.rename(columns={top_provinces.columns[0]: 'province'}, inplace=True)
+
+    order = top_provinces['province'].tolist()
+    df1['coloring'] = pd.Categorical(df1['coloring'], categories=order, ordered=True)
+    df1 = df1.sort_values('coloring')
 
     fig = px.box(
-        df,
-        x = 'province',
-        y = 'price',
+        df1,
+        x= 'province',
+        y= 'price',
+        color='coloring',
+        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#EFA00B']
     )
 
     fig.update_layout(
@@ -413,10 +431,6 @@ def updateHouseBoxplot(region):
 
     fig.update_traces(
         hovertemplate="<b>Year:</b> %{x}<br><b>Count:</b> %{y}<extra></extra>",
-        line=dict(color='#ff8484'),
-        marker_color = africanViolet,
-        fillcolor = africanViolet,
-        line_color = africanViolet
     )
 
     fig.update_traces(
@@ -462,7 +476,7 @@ def updateHouseScatterplot(region):
     fig.update_traces(
         hovertemplate="<b>Year:</b> %{x}<br><b>Count:</b> %{y}<extra></extra>",
         line=dict(color='#ff8484'),
-        marker_color = africanViolet,
+        marker_color= africanViolet,
     )
 
     fig.update_traces(
@@ -479,19 +493,38 @@ def updateHouseScatterplot(region):
 )
 
 def updateMergedBubbleChart(region):
+    # Obtaining the top 3
+    df = pd.read_csv(housingDataset)
+    filtered_df = df.loc[df['region'] == region]
+    province_counts = filtered_df['province'].value_counts()
+    top_provinces = province_counts.nlargest(3)
+    others_count = province_counts[~province_counts.index.isin(top_provinces.index)].sum()
+    df1 = filtered_df.copy()
+    df1['coloring'] = df1['province'].apply(lambda x: x if x in top_provinces.index.tolist() else 'Others')
 
-    df = pd.read_csv(avgMerged)
-    df = df.loc[df['region'] == region]
+    if others_count > 0:
+        others_series = pd.Series({'Others': others_count})
+        top_provinces = pd.concat([top_provinces, others_series])
+
+    # Applying the coloring on the merged averages dataset
+    df2 = pd.read_csv(avgMerged)
+    df2 = df2.loc[df2['region'] == region]
+    df2['coloring'] = df2['province'].apply(lambda x: x if x in top_provinces.index.tolist() else 'Others')
+
+    top_provinces.reset_index().rename(columns={'index': 'coloring'})
+    df3 = pd.merge(df2, top_provinces.reset_index(name='count').rename(columns={'index':'coloring'})).sort_values('count', ascending=False)
+
 
     fig = px.scatter(
-        df,
+        df3,
         x="average_price",
         y="average_magnitude",
         size="average_land_area",
-        color="province",
-        hover_data='average_land_area'
+        color="coloring",
+        hover_data='average_land_area',
+        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#EFA00B'],
+        opacity=1.0
     )
-
 
     fig.update_layout(
         paper_bgcolor=offWhite2,
@@ -499,21 +532,21 @@ def updateMergedBubbleChart(region):
         xaxis_title="Average House Price (PHP)",
         xaxis=dict(
             scaleanchor=None,
-            constrain='domain'
+            constrain='domain',
         ),
         yaxis=dict(
             scaleanchor=None,
-            constrain='domain'
+            constrain='domain',
         ),
         margin=dict(l=200, r=200, t=50, b=50),
     )
-
 
     fig.update_traces(
         hoverinfo="x+y+text",  # Customize which information to show
         hovertemplate="<b>Avg Magnitude:</b> %{y}<br>"
                       "<b>Avg House Price:</b> %{x}<br>"
-                      "<b>Avg Land Area:</b> %{marker.size}<extra></extra>"
+                      "<b>Avg Land Area:</b> %{marker.size}<extra></extra>",
+        marker=dict(line=dict(width=0))
     )
 
     return fig
@@ -542,7 +575,7 @@ def updateQuakePie(region):
         values=top_provinces.values,
         hole=0.8,
         color=top_provinces.index,
-        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#d6fff6'],
+        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#EFA00B'],
     )
 
     fig.update_layout(
