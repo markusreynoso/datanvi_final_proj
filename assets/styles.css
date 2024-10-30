@@ -5,8 +5,6 @@
     --mid-blue: #4dccbd;
     --bright-red: #d52941;
     --salmon: #ff8484;
-    --african-violet: #B18FCF;
-    --yale: #1B4079
 }
 
 
@@ -14,6 +12,9 @@ body {
     background-color: var(--off-white);
 }
 
+#housePricingTitle{
+    color: var(--mid-blue);
+}
 #seismicEventsTitle {
     color : var(--salmon)
 }

@@ -7,7 +7,7 @@ import dash_daq as daq
 housingDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/newPH_housing.csv'
 earthquakeDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquake.csv'
 avgMerged = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/merged_house_eq.csv'
-introParagraph = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at pharetra ante. Vestibulum ut sapien id nibh efficitur pulvinar id in leo. Nullam aliquet, velit at fermentum dictum, neque massa vehicula velit, ac scelerisque nunc mi quis eros. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Mauris finibus volutpat congue. Cras ac gravida dolor. Praesent sed accumsan orci. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Ut porttitor nibh sem, vitae varius orci efficitur eget. Proin tincidunt, nisi et molestie congue, nisi nibh dignissim risus, in malesuada erat massa eu dolor. Vestibulum a quam at libero scelerisque tempus.'
+introParagraph = "The Philippines is one of the world’s top earthquake-prone countries; ensuring house safety is a crucial consideration for homebuyers. Finding a safe and well-priced home requires more than just a location search. Our website combines real estate listings with seismic data to provide insights through an integrated view of housing affordability and evaluate earthquake risk in the Philippines. \n If you are looking for a home, this can be a tool equipping you to gather essential insights by evaluating properties not just by price, number of bedrooms and bathrooms, and land size, but also the proximity of houses to earthquake-prone zones–navigating houses with confidence, balancing budget with security in this dynamic landscape."
 regionOptions = [
     {'label': 'Region I - Ilocos Region', 'value': 'Region I'},
     {'label': 'Region II - Cagayan Valley', 'value': 'Region II'},
@@ -44,7 +44,7 @@ app.layout = html.Div(children=[
     html.H1(children=[
         'An Integrated View of',
         html.Br(),
-        'House Pricing, ',
+        html.Span('House Pricing, ', id='housePricingTitle'),
         html.Br(),
         'and ',
         html.Span('Seismic Events.', id='seismicEventsTitle'),
