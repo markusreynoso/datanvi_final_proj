@@ -476,7 +476,7 @@ def updateHouseScatterplot(region):
     fig.update_traces(
         hovertemplate="<b>Year:</b> %{x}<br><b>Count:</b> %{y}<extra></extra>",
         line=dict(color='#ff8484'),
-        marker_color= africanViolet,
+        marker_color= darkGreen,
     )
 
     fig.update_traces(
@@ -622,7 +622,7 @@ def updateQuakeHist(region):
     fig = px.histogram(
         df.loc[df['region'] == region]['magnitude'],
         x='magnitude',
-        color_discrete_sequence=[africanViolet],
+        color_discrete_sequence=[darkGreen],
     )
 
     fig.update_layout(
@@ -652,13 +652,32 @@ def updateQuakeHist(region):
 )
 def updateQuakeLine(region):
     df = pd.read_csv(earthquakeDataset)
-    df = df.loc[df['region'] == region]
-    df.groupby('date_time_ph')['magnitude'].count().reset_index()
+    filtered_df = df.loc[df['region'] == region]
+    province_counts = filtered_df['province'].value_counts()
+    top_provinces = province_counts.nlargest(3)
+    others_count = province_counts[~province_counts.index.isin(top_provinces.index)].sum()
+
+    df1 = filtered_df.copy()
+    df1['coloring'] = df1['province'].apply(lambda x: x if x in top_provinces.index.tolist() else 'Others')
+
+    if others_count > 0:
+        others_series = pd.Series({'Others': others_count})
+        top_provinces = pd.concat([top_provinces, others_series])
+
+    top_provinces = top_provinces.reset_index(name='count').sort_values('count', ascending=False)
+    top_provinces.rename(columns={top_provinces.columns[0]: 'province'}, inplace=True)
+
+    order = top_provinces['province'].tolist()
+    df1['coloring'] = pd.Categorical(df1['coloring'], categories=order, ordered=True)
+    df1 = df1.sort_values('coloring')
 
     fig = px.line(
-        df.groupby('date_time_ph')['magnitude'].count().reset_index(),
+        df1.groupby(['date_time_ph', 'coloring'])['magnitude'].count().reset_index(name='count'),
         x='date_time_ph',
-        y='magnitude'
+        y='count',
+        color='coloring',
+        category_orders={'coloring': order},
+        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#EFA00B']
     )
 
     fig.update_layout(
@@ -678,11 +697,9 @@ def updateQuakeLine(region):
 
     fig.update_traces(
         hovertemplate="<b>Year:</b> %{x}<br><b>Count:</b> %{y}<extra></extra>",
-        line=dict(color=africanViolet)
     )
 
     return fig
-
 
 
 if __name__ == '__main__':
