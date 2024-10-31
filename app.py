@@ -7,7 +7,16 @@ import dash_daq as daq
 housingDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/newPH_housing.csv'
 earthquakeDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquake.csv'
 avgMerged = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/merged_house_eq.csv'
-introParagraph = "The Philippines is one of the world’s top earthquake-prone countries; ensuring house safety is a crucial consideration for homebuyers. Finding a safe and well-priced home requires more than just a location search. Our website combines real estate listings with seismic data to provide insights through an integrated view of housing affordability and evaluate earthquake risk in the Philippines. \n If you are looking for a home, this can be a tool equipping you to gather essential insights by evaluating properties not just by price, number of bedrooms and bathrooms, and land size, but also the proximity of houses to earthquake-prone zones–navigating houses with confidence, balancing budget with security in this dynamic landscape."
+introParagraph1 = ("The Philippines is one of the world’s top earthquake-prone countries according to ")
+introParagraph2 = ("Inquirer")
+introParagraph3 = ("; ensuring house safety is a crucial consideration for homebuyers. Finding a safe and well-priced home requires "
+                  "more than just a location search. Our website combines real estate listings with seismic data to provide "
+                  "insights through an integrated view of housing affordability and evaluate earthquake risk in the Philippines. "
+                  "If you are looking for a home, this can be a tool equipping you to gather essential insights by evaluating "
+                  "properties not just by price, number of bedrooms and bathrooms, and land size, but also the proximity "
+                  "of houses to earthquake-prone zones–navigating houses with confidence, balancing budget with security in this dynamic landscape.")
+
+
 regionOptions = [
     {'label': 'Region I - Ilocos Region', 'value': 'Region I'},
     {'label': 'Region II - Cagayan Valley', 'value': 'Region II'},
@@ -50,7 +59,11 @@ app.layout = html.Div(children=[
         html.Span('Seismic Events.', id='seismicEventsTitle'),
     ]),
 
-    html.Div(children=html.P(introParagraph)),
+    html.Div(children=html.P([
+        introParagraph1,
+        html.A(introParagraph2, href = 'https://newsinfo.inquirer.net/1923394/ph-lands-on-list-of-countries-most-prone-to-quakes'),
+        introParagraph3
+    ])),
 
     html.Div(className='spacer'),
 
@@ -155,7 +168,7 @@ app.layout = html.Div(children=[
             ]
         )
     ),
-    html.Center(html.Div(id='mapDiv', children=[dcc.Graph(id='mainMap')])),
+    html.Center(html.Div(id='mapDiv', children=[dcc.Graph(id='mainMap')])), #TODO Dave
 
     html.Br(),
     html.Br(),
@@ -622,7 +635,7 @@ def updateQuakeHist(region):
     fig = px.histogram(
         df.loc[df['region'] == region]['magnitude'],
         x='magnitude',
-        color_discrete_sequence=[darkGreen],
+        color_discrete_sequence=[africanViolet],
     )
 
     fig.update_layout(
@@ -697,9 +710,11 @@ def updateQuakeLine(region):
 
     fig.update_traces(
         hovertemplate="<b>Year:</b> %{x}<br><b>Count:</b> %{y}<extra></extra>",
+        line=dict(color=africanViolet)
     )
 
     return fig
+
 
 
 if __name__ == '__main__':
