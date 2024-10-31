@@ -44,7 +44,6 @@ darkGreen = "#022f40"
 midBlue = "4dccbd"
 brightRed = "#d52941"
 salmon = "#ff8484"
-africanViolet = '#B18FCF'
 yale = '#1B4079'
 
 app = Dash(__name__)
@@ -635,7 +634,7 @@ def updateQuakeHist(region):
     fig = px.histogram(
         df.loc[df['region'] == region]['magnitude'],
         x='magnitude',
-        color_discrete_sequence=[africanViolet],
+        color_discrete_sequence=[darkGreen],
     )
 
     fig.update_layout(
@@ -710,7 +709,6 @@ def updateQuakeLine(region):
 
     fig.update_traces(
         hovertemplate="<b>Year:</b> %{x}<br><b>Count:</b> %{y}<extra></extra>",
-        line=dict(color=africanViolet)
     )
 
     return fig
