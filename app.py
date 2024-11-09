@@ -366,19 +366,11 @@ def updateHousePie(region, clickData, clickStored):
                 color_discrete_sequence=colorSequenceList,
             )
 
-        elif selected in topProvinces['province'].values:
-            colorIdx = topProvinces.loc[topProvinces['province'] == selected].index[0]
-            toStore = selected
-            fig = px.pie(
-                topProvinces.loc[topProvinces['province'] == selected],
-                names='province',
-                values='count',
-                hole=0.8,
-                color='province',
-                color_discrete_sequence=[colorSequenceList[colorIdx]],
-            )
 
         else:
+            topProvinces = topProvinces.loc[topProvinces['province'] == selected]
+            colorIdx = topProvinces.loc[topProvinces['province'] == selected].index[0]
+            toStore = selected
 
             fig = px.pie(
                 topProvinces,
@@ -386,7 +378,7 @@ def updateHousePie(region, clickData, clickStored):
                 values='count',
                 hole=0.8,
                 color='province',
-                color_discrete_sequence=colorSequenceList,
+                color_discrete_sequence=[colorSequenceList[colorIdx]],
             )
     else:
         fig = px.pie(
