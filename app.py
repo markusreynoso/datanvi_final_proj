@@ -650,13 +650,14 @@ def updateQuakeBox(region):
 
     fig = px.box(
         df1,
-        x='region',
+        x='province',
         y='magnitude',
         color='coloring',
         color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#EFA00B']
     )
 
     fig.update_layout(
+        showlegend=False,
         paper_bgcolor=offWhite2,
         title=dict(
             text=f"Earthquake Magnitude Distribution",
@@ -708,6 +709,7 @@ def updateQuakeLine(region):
     )
 
     fig.update_layout(
+        showlegend=False,
         paper_bgcolor=offWhite2,
         yaxis_title="Number of Earthquakes",
         xaxis_title="Year",
