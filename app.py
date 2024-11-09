@@ -597,41 +597,62 @@ def updateHouseScatterplot(region, clickStored):
 
 @app.callback(
     Output(component_id='mergedBubblechart', component_property='figure'),
-    Input(component_id='houseDropdown', component_property = 'value')
+    [Input(component_id='houseDropdown', component_property = 'value'),
+     Input(component_id='donutIsolateStore', component_property='data')]
 )
-
-def updateMergedBubbleChart(region):
+def updateMergedBubbleChart(region, clickStored):
     # Obtaining the top 3
     df = pd.read_csv(housingDataset)
     filtered_df = df.loc[df['region'] == region]
-    province_counts = filtered_df['province'].value_counts()
-    top_provinces = province_counts.nlargest(3)
-    others_count = province_counts[~province_counts.index.isin(top_provinces.index)].sum()
+    provinceCounts = filtered_df['province'].value_counts()
+    topProvinces = provinceCounts.nlargest(3)
+    others_count = provinceCounts[~provinceCounts.index.isin(topProvinces.index)].sum()
     df1 = filtered_df.copy()
-    df1['coloring'] = df1['province'].apply(lambda x: x if x in top_provinces.index.tolist() else 'Others')
+    df1['coloring'] = df1['province'].apply(lambda x: x if x in topProvinces.index.tolist() else 'Others')
 
     if others_count > 0:
         others_series = pd.Series({'Others': others_count})
-        top_provinces = pd.concat([top_provinces, others_series])
+        topProvinces = pd.concat([topProvinces, others_series])
 
     # Applying the coloring on the merged averages dataset
     df2 = pd.read_csv(avgMerged)
     df2 = df2.loc[df2['region'] == region]
-    df2['coloring'] = df2['province'].apply(lambda x: x if x in top_provinces.index.tolist() else 'Others')
+    df2['coloring'] = df2['province'].apply(lambda x: x if x in topProvinces.index.tolist() else 'Others')
 
-    top_provinces.reset_index().rename(columns={'index': 'coloring'})
-    df3 = pd.merge(df2, top_provinces.reset_index(name='count').rename(columns={'index':'coloring'})).sort_values('count', ascending=False)
+    topProvinces = topProvinces.reset_index(name='count')
+    topProvinces = topProvinces.rename(columns={topProvinces.columns[0]:'coloring'})
+    df3 = pd.merge(df2, topProvinces).sort_values('count', ascending=False)
 
-    fig = px.scatter(
-        df3,
-        x="average_price",
-        y="average_magnitude",
-        size="average_land_area",
-        color="coloring",
-        hover_data='average_land_area',
-        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#EFA00B'],
-        opacity=1.0
-    )
+    if clickStored:
+        topProvinces = topProvinces.sort_values('count', ascending=False).reset_index(drop=True)
+        order = topProvinces['coloring'].tolist()
+        df3['coloring'] = pd.Categorical(df3['coloring'], categories=order, ordered=True)
+        df3 = df3.sort_values('coloring')
+        df3 = df3.loc[df3['coloring'] == clickStored]
+
+        colorIdx = topProvinces.loc[topProvinces['coloring'] == clickStored].index[0]
+
+        fig = px.scatter(
+            df3,
+            x="average_price",
+            y="average_magnitude",
+            size="average_land_area",
+            color="coloring",
+            hover_data='average_land_area',
+            color_discrete_sequence=[colorSequenceList[colorIdx]],
+            opacity=1.0
+        )
+    else:
+        fig = px.scatter(
+            df3,
+            x="average_price",
+            y="average_magnitude",
+            size="average_land_area",
+            color="coloring",
+            hover_data='average_land_area',
+            color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#EFA00B'],
+            opacity=1.0
+        )
 
     fig.update_layout(
         showlegend=False,
