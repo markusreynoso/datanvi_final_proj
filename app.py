@@ -517,22 +517,57 @@ def updateHouseBoxplot(region, clickStored):
 
 @app.callback(
     Output(component_id='houseScatterplot', component_property='figure'),
-    Input(component_id='houseDropdown', component_property = 'value')
+    [Input(component_id='houseDropdown', component_property='value'),
+     Input(component_id='donutIsolateStore', component_property='data')]
 )
-
-def updateHouseScatterplot(region):
-
+def updateHouseScatterplot(region, clickStored):
     df = pd.read_csv(housingDataset)
-    df = df.loc[df['region'] == region]
+    filtered_df = df.loc[df['region'] == region]
+    province_counts = filtered_df['province'].value_counts()
+    topProvinces = province_counts.nlargest(3)
+    others_count = province_counts[~province_counts.index.isin(topProvinces.index)].sum()
+    df1 = filtered_df.copy()
+    df1['coloring'] = df1['province'].apply(lambda x: x if x in topProvinces.index.tolist() else 'Others')
 
-    fig = px.scatter(
-        df,
-        x='land area',
-        y='price'
-    )
+    if others_count > 0:
+        others_series = pd.Series({'Others': others_count})
+        topProvinces = pd.concat([topProvinces, others_series])
 
+    topProvinces = topProvinces.reset_index(name='count').sort_values('count', ascending=False)
+    topProvinces.rename(columns={topProvinces.columns[0]: 'province'}, inplace=True)
+    topProvinces = topProvinces.reset_index(drop=True)
+
+    # If the stored data is not None i.e. an actual province is stored
+    if clickStored:
+        topProvinces = topProvinces.loc[topProvinces['province'] == clickStored]
+        order = topProvinces['province'].tolist()
+        df1['coloring'] = pd.Categorical(df1['coloring'], categories=order, ordered=True)
+        df1 = df1.sort_values('coloring')
+
+        colorIdx = topProvinces.loc[topProvinces['province'] == clickStored].index[0]
+
+        fig = px.scatter(
+            df1,
+            x='land area',
+            y='price',
+            color='coloring',
+            color_discrete_sequence=[colorSequenceList[colorIdx]]
+        )
+    else:
+        order = topProvinces['province'].tolist()
+        df1['coloring'] = pd.Categorical(df1['coloring'], categories=order, ordered=True)
+        df1 = df1.sort_values('coloring')
+
+        fig = px.scatter(
+            df1,
+            x='land area',
+            y='price',
+            color='coloring',
+            color_discrete_sequence=colorSequenceList
+        )
 
     fig.update_layout(
+        showlegend=False,
         paper_bgcolor=offWhite2,
         yaxis_title="Prices",
         xaxis_title="Land Area of Houses",
@@ -550,7 +585,6 @@ def updateHouseScatterplot(region):
     fig.update_traces(
         hovertemplate="<b>Year:</b> %{x}<br><b>Count:</b> %{y}<extra></extra>",
         line=dict(color='#ff8484'),
-        marker_color= darkGreen,
     )
 
     fig.update_traces(
