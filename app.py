@@ -417,7 +417,7 @@ def updateHousePie(region, clickData, clickStored):
         hovertemplate="<b>%{label}</b><br>Count: %{value}<extra></extra>",
         textinfo='none'
     )
-
+    print(toStore)
     return fig, region, toStore
 
 
