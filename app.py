@@ -7,6 +7,7 @@ import dash_daq as daq
 housingDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/newPH_housing.csv'
 earthquakeDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquake.csv'
 avgMerged = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/merged_house_eq.csv'
+colorSequenceList = ['#d52941', '#ff8484', '#4dccbd', '#EFA00B']
 introParagraph1 = ("The Philippines is one of the world’s top earthquake-prone countries according to ")
 introParagraph2 = ("Inquirer")
 introParagraph3 = ("; ensuring house safety is a crucial consideration for homebuyers. Finding a safe and well-priced home requires "
@@ -49,6 +50,11 @@ yale = '#1B4079'
 app = Dash(__name__)
 
 app.layout = html.Div(children=[
+    dcc.Store(
+        id='donutIsolateStore',
+        data=None
+    ),
+
     html.H1(children=[
         'An Integrated View of',
         html.Br(),
@@ -323,28 +329,62 @@ app.layout = html.Div(children=[
 
 @app.callback(
     [Output(component_id='housePie', component_property='figure'),
-     Output(component_id='houseRegionText', component_property='children'), ],
-    Input(component_id='houseDropdown', component_property='value')
+     Output(component_id='houseRegionText', component_property='children'),
+     Output(component_id='donutIsolateStore', component_property='data')],
+    [Input(component_id='houseDropdown', component_property='value'),
+     Input(component_id='housePie', component_property='clickData'),
+     Input(component_id='donutIsolateStore', component_property='data')]
 )
-def updateHousePie(region):
+def updateHousePie(region, clickData, clickStored):
     df = pd.read_csv(housingDataset)
     filtered_df = df.loc[df['region'] == region]
-    province_counts = filtered_df['province'].value_counts()
-    top_provinces = province_counts.nlargest(3)
-    others_count = province_counts[~province_counts.index.isin(top_provinces.index)].sum()
+    provinceCounts = filtered_df['province'].value_counts()
+    topProvinces = provinceCounts.nlargest(3)
+    others_count = provinceCounts[~provinceCounts.index.isin(topProvinces.index)].sum()
     if others_count > 0:
         others_series = pd.Series({'Others': others_count})
-        top_provinces = pd.concat([top_provinces, others_series])
+        topProvinces = pd.concat([topProvinces, others_series])
 
-    top_provinces = top_provinces.sort_values(ascending=False)
+    topProvinces = topProvinces.sort_values(ascending=False).reset_index()
+    topProvinces.rename(columns={topProvinces.columns[0]: 'province', topProvinces.columns[1]: 'count'}, inplace=True)
+    topProvinces = topProvinces.reset_index(drop=True)
 
-    fig = px.pie(
-        names=top_provinces.index,
-        values=top_provinces.values,
-        hole=0.8,
-        color=top_provinces.index,
-        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#EFA00B'],
-    )
+    # Just to initialize the variable
+    toStore = None
+    if clickData:
+        selected = clickData['points'][0]['label']
+        if selected == clickStored:
+            toStore = None
+            fig = px.pie(
+                topProvinces,
+                names='province',
+                values='count',
+                hole=0.8,
+                color='province',
+                color_discrete_sequence=colorSequenceList,
+            )
+        else:
+            topProvinces = topProvinces.loc[topProvinces['province'] == selected]
+            colorIdx = topProvinces.loc[topProvinces['province'] == selected].index[0]
+            toStore = selected
+
+            fig = px.pie(
+                topProvinces,
+                names='province',
+                values='count',
+                hole=0.8,
+                color='province',
+                color_discrete_sequence=[colorSequenceList[colorIdx]],
+            )
+    else:
+        fig = px.pie(
+            topProvinces,
+            names='province',
+            values='count',
+            hole=0.8,
+            color='province',
+            color_discrete_sequence=colorSequenceList,
+        )
 
     fig.update_layout(
         title=dict(
@@ -377,42 +417,63 @@ def updateHousePie(region):
         hovertemplate="<b>%{label}</b><br>Count: %{value}<extra></extra>",
         textinfo='none'
     )
-    return fig, region
+
+    return fig, region, toStore
 
 
 @app.callback(
 Output(component_id='houseBoxplot', component_property='figure'),
-    Input(component_id='houseDropdown', component_property='value')
+    [Input(component_id='houseDropdown', component_property='value'),
+     Input(component_id='donutIsolateStore', component_property='data')]
 )
-def updateHouseBoxplot(region):
+def updateHouseBoxplot(region, clickStored):
     df = pd.read_csv(housingDataset)
     filtered_df = df.loc[df['region'] == region]
     province_counts = filtered_df['province'].value_counts()
-    top_provinces = province_counts.nlargest(3)
-    others_count = province_counts[~province_counts.index.isin(top_provinces.index)].sum()
+    topProvinces = province_counts.nlargest(3)
+    others_count = province_counts[~province_counts.index.isin(topProvinces.index)].sum()
     df1 = filtered_df.copy()
-    df1['coloring'] = df1['province'].apply(lambda x: x if x in top_provinces.index.tolist() else 'Others')
+    df1['coloring'] = df1['province'].apply(lambda x: x if x in topProvinces.index.tolist() else 'Others')
 
     if others_count > 0:
         others_series = pd.Series({'Others': others_count})
-        top_provinces = pd.concat([top_provinces, others_series])
+        topProvinces = pd.concat([topProvinces, others_series])
 
-    top_provinces = top_provinces.reset_index(name='count').sort_values('count', ascending=False)
-    top_provinces.rename(columns={top_provinces.columns[0]: 'province'}, inplace=True)
+    topProvinces = topProvinces.reset_index(name='count').sort_values('count', ascending=False)
+    topProvinces.rename(columns={topProvinces.columns[0]: 'province'}, inplace=True)
+    topProvinces = topProvinces.reset_index(drop=True)
 
-    order = top_provinces['province'].tolist()
-    df1['coloring'] = pd.Categorical(df1['coloring'], categories=order, ordered=True)
-    df1 = df1.sort_values('coloring')
+    # If the stored data is not None i.e. an actual province is stored
+    if clickStored:
+        topProvinces = topProvinces.loc[topProvinces['province'] == clickStored]
+        order = topProvinces['province'].tolist()
+        df1['coloring'] = pd.Categorical(df1['coloring'], categories=order, ordered=True)
+        df1 = df1.sort_values('coloring')
 
-    fig = px.box(
-        df1,
-        x= 'province',
-        y= 'price',
-        color='coloring',
-        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#EFA00B']
-    )
+        colorIdx = topProvinces.loc[topProvinces['province'] == clickStored].index[0]
+
+        fig = px.box(
+            df1,
+            x='province',
+            y='price',
+            color='coloring',
+            color_discrete_sequence=[colorSequenceList[colorIdx]]
+        )
+
+    else:
+        order = topProvinces['province'].tolist()
+        df1['coloring'] = pd.Categorical(df1['coloring'], categories=order, ordered=True)
+        df1 = df1.sort_values('coloring')
+        fig = px.box(
+            df1,
+            x= 'province',
+            y= 'price',
+            color='coloring',
+            color_discrete_sequence=colorSequenceList
+        )
 
     fig.update_layout(
+        showlegend=False,
         paper_bgcolor=offWhite2,
         title=dict(
             text=f"House Prices Distribution",
@@ -441,12 +502,9 @@ def updateHouseBoxplot(region):
         margin=dict(l=200, r=200, t=50, b=50),
     )
 
-    fig.update_traces(
-        hovertemplate="<b>Year:</b> %{x}<br><b>Count:</b> %{y}<extra></extra>",
-    )
 
     fig.update_traces(
-        hoverinfo="x+y+text",  # Customize which information to show
+        hoverinfo="x+y+text",
         hovertemplate="<b>Category:</b> %{x}<br><b>Value:</b> %{y}<extra></extra>"
     )
 
@@ -526,7 +584,6 @@ def updateMergedBubbleChart(region):
     top_provinces.reset_index().rename(columns={'index': 'coloring'})
     df3 = pd.merge(df2, top_provinces.reset_index(name='count').rename(columns={'index':'coloring'})).sort_values('count', ascending=False)
 
-
     fig = px.scatter(
         df3,
         x="average_price",
@@ -539,6 +596,7 @@ def updateMergedBubbleChart(region):
     )
 
     fig.update_layout(
+        showlegend=False,
         paper_bgcolor=offWhite2,
         yaxis_title="Average Earthquake Magnitude",
         xaxis_title="Average House Price (PHP)",
