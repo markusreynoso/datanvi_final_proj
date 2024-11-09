@@ -51,7 +51,12 @@ app = Dash(__name__)
 
 app.layout = html.Div(children=[
     dcc.Store(
-        id='donutIsolateStore',
+        id='donutHouseIsolateStore',
+        data=None
+    ),
+
+    dcc.Store(
+        id='donutQuakeIsolateStore',
         data=None
     ),
 
@@ -330,19 +335,19 @@ app.layout = html.Div(children=[
 @app.callback(
     [Output(component_id='housePie', component_property='figure'),
      Output(component_id='houseRegionText', component_property='children'),
-     Output(component_id='donutIsolateStore', component_property='data')],
+     Output(component_id='donutHouseIsolateStore', component_property='data')],
     [Input(component_id='houseDropdown', component_property='value'),
      Input(component_id='housePie', component_property='clickData'),
-     Input(component_id='donutIsolateStore', component_property='data')]
+     Input(component_id='donutHouseIsolateStore', component_property='data')]
 )
 def updateHousePie(region, clickData, clickStored):
     df = pd.read_csv(housingDataset)
     filtered_df = df.loc[df['region'] == region]
     provinceCounts = filtered_df['province'].value_counts()
     topProvinces = provinceCounts.nlargest(3)
-    others_count = provinceCounts[~provinceCounts.index.isin(topProvinces.index)].sum()
-    if others_count > 0:
-        others_series = pd.Series({'Others': others_count})
+    othersCount = provinceCounts[~provinceCounts.index.isin(topProvinces.index)].sum()
+    if othersCount > 0:
+        others_series = pd.Series({'Others': othersCount})
         topProvinces = pd.concat([topProvinces, others_series])
 
     topProvinces = topProvinces.sort_values(ascending=False).reset_index()
@@ -365,8 +370,6 @@ def updateHousePie(region, clickData, clickStored):
                 color='province',
                 color_discrete_sequence=colorSequenceList,
             )
-
-
         else:
             topProvinces = topProvinces.loc[topProvinces['province'] == selected]
             colorIdx = topProvinces.loc[topProvinces['province'] == selected].index[0]
@@ -428,7 +431,7 @@ def updateHousePie(region, clickData, clickStored):
 @app.callback(
 Output(component_id='houseBoxplot', component_property='figure'),
     [Input(component_id='houseDropdown', component_property='value'),
-     Input(component_id='donutIsolateStore', component_property='data')]
+     Input(component_id='donutHouseIsolateStore', component_property='data')]
 )
 def updateHouseBoxplot(region, clickStored):
     df = pd.read_csv(housingDataset)
@@ -518,7 +521,7 @@ def updateHouseBoxplot(region, clickStored):
 @app.callback(
     Output(component_id='houseScatterplot', component_property='figure'),
     [Input(component_id='houseDropdown', component_property='value'),
-     Input(component_id='donutIsolateStore', component_property='data')]
+     Input(component_id='donutHouseIsolateStore', component_property='data')]
 )
 def updateHouseScatterplot(region, clickStored):
     df = pd.read_csv(housingDataset)
@@ -598,7 +601,7 @@ def updateHouseScatterplot(region, clickStored):
 @app.callback(
     Output(component_id='mergedBubblechart', component_property='figure'),
     [Input(component_id='houseDropdown', component_property = 'value'),
-     Input(component_id='donutIsolateStore', component_property='data')]
+     Input(component_id='donutHouseIsolateStore', component_property='data')]
 )
 def updateMergedBubbleChart(region, clickStored):
     # Obtaining the top 3
@@ -684,28 +687,64 @@ def updateMergedBubbleChart(region, clickStored):
 
 @app.callback(
     [Output(component_id='quakePie', component_property='figure'),
-     Output(component_id='quakeRegionText', component_property='children'), ],
-    Input(component_id='quakeDropdown', component_property='value')
+     Output(component_id='quakeRegionText', component_property='children'),
+     Output(component_id='donutQuakeIsolateStore', component_property='data')],
+    [Input(component_id='quakeDropdown', component_property='value'),
+     Input(component_id='quakePie', component_property='clickData'),
+     Input(component_id='donutQuakeIsolateStore', component_property='data')]
 )
-def updateQuakePie(region):
+def updateQuakePie(region, clickData, clickStored):
     df = pd.read_csv(earthquakeDataset)
     filtered_df = df.loc[df['region'] == region]
     province_counts = filtered_df['province'].value_counts()
-    top_provinces = province_counts.nlargest(3)
-    others_count = province_counts[~province_counts.index.isin(top_provinces.index)].sum()
-    if others_count > 0:
-        others_series = pd.Series({'Others': others_count})
-        top_provinces = pd.concat([top_provinces, others_series])
+    topProvinces = province_counts.nlargest(3)
+    othersCount = province_counts[~province_counts.index.isin(topProvinces.index)].sum()
+    if othersCount > 0:
+        others_series = pd.Series({'Others': othersCount})
+        topProvinces = pd.concat([topProvinces, others_series])
 
-    top_provinces = top_provinces.sort_values(ascending=False)
+    topProvinces = topProvinces.sort_values(ascending=False).reset_index()
+    topProvinces.rename(columns={topProvinces.columns[0]: 'province', topProvinces.columns[1]: 'count'}, inplace=True)
+    topProvinces = topProvinces.reset_index(drop=True)
 
-    fig = px.pie(
-        names=top_provinces.index,
-        values=top_provinces.values,
-        hole=0.8,
-        color=top_provinces.index,
-        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#EFA00B'],
-    )
+    # Just to initialize the variable
+    toStore = None
+
+    if clickData:
+        selected = clickData['points'][0]['label']
+
+        if selected == clickStored:
+            toStore = None
+            fig = px.pie(
+                topProvinces,
+                names='province',
+                values='count',
+                hole=0.8,
+                color='province',
+                color_discrete_sequence=colorSequenceList,
+            )
+        else:
+            topProvinces = topProvinces.loc[topProvinces['province'] == selected]
+            colorIdx = topProvinces.loc[topProvinces['province'] == selected].index[0]
+            toStore = selected
+
+            fig = px.pie(
+                topProvinces,
+                names='province',
+                values='count',
+                hole=0.8,
+                color='province',
+                color_discrete_sequence=[colorSequenceList[colorIdx]],
+            )
+    else:
+        fig = px.pie(
+            topProvinces,
+            names='province',
+            values='count',
+            hole=0.8,
+            color='province',
+            color_discrete_sequence=colorSequenceList,
+        )
 
     fig.update_layout(
         title=dict(
@@ -738,40 +777,60 @@ def updateQuakePie(region):
         hovertemplate="<b>%{label}</b><br>Count: %{value}<extra></extra>",
         textinfo='none'
     )
-    return fig, region
+    return fig, region, toStore
 
 
 @app.callback(
     Output(component_id='quakeHist', component_property='figure'),
-    Input(component_id='quakeDropdown', component_property='value')
+    [Input(component_id='quakeDropdown', component_property='value'),
+     Input(component_id='donutQuakeIsolateStore', component_property='data')]
 )
-def updateQuakeBox(region):
+def updateQuakeBox(region, clickStored):
     df = pd.read_csv(earthquakeDataset)
     filtered_df = df.loc[df['region'] == region]
     province_counts = filtered_df['province'].value_counts()
-    top_provinces = province_counts.nlargest(3)
-    others_count = province_counts[~province_counts.index.isin(top_provinces.index)].sum()
+    topProvinces = province_counts.nlargest(3)
+    others_count = province_counts[~province_counts.index.isin(topProvinces.index)].sum()
     df1 = filtered_df.copy()
-    df1['coloring'] = df1['province'].apply(lambda x: x if x in top_provinces.index.tolist() else 'Others')
+    df1['coloring'] = df1['province'].apply(lambda x: x if x in topProvinces.index.tolist() else 'Others')
 
     if others_count > 0:
         others_series = pd.Series({'Others': others_count})
-        top_provinces = pd.concat([top_provinces, others_series])
+        topProvinces = pd.concat([topProvinces, others_series])
 
-    top_provinces = top_provinces.reset_index(name='count').sort_values('count', ascending=False)
-    top_provinces.rename(columns={top_provinces.columns[0]: 'province'}, inplace=True)
+    topProvinces = topProvinces.reset_index(name='count').sort_values('count', ascending=False)
+    topProvinces.rename(columns={topProvinces.columns[0]: 'province'}, inplace=True)
+    topProvinces = topProvinces.reset_index(drop=True)
 
-    order = top_provinces['province'].tolist()
-    df1['coloring'] = pd.Categorical(df1['coloring'], categories=order, ordered=True)
-    df1 = df1.sort_values('coloring')
+    # If the stored data is not None i.e. an actual province is stored
+    if clickStored:
+        topProvinces = topProvinces.loc[topProvinces['province'] == clickStored]
+        order = topProvinces['province'].tolist()
+        df1['coloring'] = pd.Categorical(df1['coloring'], categories=order, ordered=True)
+        df1 = df1.sort_values('coloring')
 
-    fig = px.box(
-        df1,
-        x='province',
-        y='magnitude',
-        color='coloring',
-        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#EFA00B']
-    )
+        colorIdx = topProvinces.loc[topProvinces['province'] == clickStored].index[0]
+
+        fig = px.box(
+            df1,
+            x='province',
+            y='magnitude',
+            color='coloring',
+            color_discrete_sequence=[colorSequenceList[colorIdx]]
+        )
+
+    else:
+        order = topProvinces['province'].tolist()
+        df1['coloring'] = pd.Categorical(df1['coloring'], categories=order, ordered=True)
+        df1 = df1.sort_values('coloring')
+
+        fig = px.box(
+            df1,
+            x='province',
+            y='magnitude',
+            color='coloring',
+            color_discrete_sequence=colorSequenceList
+        )
 
     fig.update_layout(
         showlegend=False,
