@@ -628,13 +628,32 @@ def updateQuakePie(region):
     Output(component_id='quakeHist', component_property='figure'),
     Input(component_id='quakeDropdown', component_property='value')
 )
-def updateQuakeHist(region):
+def updateQuakeBox(region):
     df = pd.read_csv(earthquakeDataset)
-    df.sort_values('region', ascending=True)
-    fig = px.histogram(
-        df.loc[df['region'] == region]['magnitude'],
-        x='magnitude',
-        color_discrete_sequence=[darkGreen],
+    filtered_df = df.loc[df['region'] == region]
+    province_counts = filtered_df['province'].value_counts()
+    top_provinces = province_counts.nlargest(3)
+    others_count = province_counts[~province_counts.index.isin(top_provinces.index)].sum()
+    df1 = filtered_df.copy()
+    df1['coloring'] = df1['province'].apply(lambda x: x if x in top_provinces.index.tolist() else 'Others')
+
+    if others_count > 0:
+        others_series = pd.Series({'Others': others_count})
+        top_provinces = pd.concat([top_provinces, others_series])
+
+    top_provinces = top_provinces.reset_index(name='count').sort_values('count', ascending=False)
+    top_provinces.rename(columns={top_provinces.columns[0]: 'province'}, inplace=True)
+
+    order = top_provinces['province'].tolist()
+    df1['coloring'] = pd.Categorical(df1['coloring'], categories=order, ordered=True)
+    df1 = df1.sort_values('coloring')
+
+    fig = px.box(
+        df1,
+        x='region',
+        y='magnitude',
+        color='coloring',
+        color_discrete_sequence=['#d52941', '#ff8484', '#4dccbd', '#EFA00B']
     )
 
     fig.update_layout(
@@ -649,10 +668,6 @@ def updateQuakeHist(region):
             x=0.5,
             xanchor='center'
         )
-    )
-
-    fig.update_traces(
-        hovertemplate="<b>Magnitude:</b> %{x}<br><b>Count:</b> %{y}<extra></extra>"
     )
 
     return fig
