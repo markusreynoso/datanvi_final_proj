@@ -351,8 +351,10 @@ def updateHousePie(region, clickData, clickStored):
 
     # Just to initialize the variable
     toStore = None
+
     if clickData:
         selected = clickData['points'][0]['label']
+
         if selected == clickStored:
             toStore = None
             fig = px.pie(
@@ -363,10 +365,20 @@ def updateHousePie(region, clickData, clickStored):
                 color='province',
                 color_discrete_sequence=colorSequenceList,
             )
-        else:
-            topProvinces = topProvinces.loc[topProvinces['province'] == selected]
+
+        elif selected in topProvinces['province'].values:
             colorIdx = topProvinces.loc[topProvinces['province'] == selected].index[0]
             toStore = selected
+            fig = px.pie(
+                topProvinces.loc[topProvinces['province'] == selected],
+                names='province',
+                values='count',
+                hole=0.8,
+                color='province',
+                color_discrete_sequence=[colorSequenceList[colorIdx]],
+            )
+
+        else:
 
             fig = px.pie(
                 topProvinces,
@@ -374,7 +386,7 @@ def updateHousePie(region, clickData, clickStored):
                 values='count',
                 hole=0.8,
                 color='province',
-                color_discrete_sequence=[colorSequenceList[colorIdx]],
+                color_discrete_sequence=colorSequenceList,
             )
     else:
         fig = px.pie(
@@ -417,7 +429,7 @@ def updateHousePie(region, clickData, clickStored):
         hovertemplate="<b>%{label}</b><br>Count: %{value}<extra></extra>",
         textinfo='none'
     )
-    print(toStore)
+
     return fig, region, toStore
 
 
@@ -788,6 +800,12 @@ def updateQuakeLine(region):
 
     return fig
 
+@app.callback(
+    Output(component_id='housePie', component_property='clickData'),
+    Input(component_id='houseDropdown', component_property='value')
+)
+def resetClickData(value):
+    return None
 
 
 if __name__ == '__main__':
