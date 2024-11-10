@@ -787,11 +787,11 @@ def updateQuakePie(region, clickData, clickStored):
 )
 def updateQuakeBox(region, clickStored):
     df = pd.read_csv(earthquakeDataset)
-    filtered_df = df.loc[df['region'] == region]
-    province_counts = filtered_df['province'].value_counts()
+    filteredDf = df.loc[df['region'] == region]
+    province_counts = filteredDf['province'].value_counts()
     topProvinces = province_counts.nlargest(3)
     others_count = province_counts[~province_counts.index.isin(topProvinces.index)].sum()
-    df1 = filtered_df.copy()
+    df1 = filteredDf.copy()
     df1['coloring'] = df1['province'].apply(lambda x: x if x in topProvinces.index.tolist() else 'Others')
 
     if others_count > 0:
