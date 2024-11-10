@@ -882,7 +882,7 @@ def updateQuakeLine(region, clickStored):
         colorIdx = topProvinces.loc[topProvinces['province'] == clickStored].index[0]
 
         fig = px.line(
-            df1.groupby(['date_time_ph', 'coloring'])['magnitude'].count().reset_index(name='count'),
+            df1.groupby(['date_time_ph', 'coloring'], observed=False)['magnitude'].count().reset_index(name='count'),
             x='date_time_ph',
             y='count',
             color='coloring',
@@ -896,7 +896,7 @@ def updateQuakeLine(region, clickStored):
         df1 = df1.sort_values('coloring')
 
         fig = px.line(
-            df1.groupby(['date_time_ph', 'coloring'])['magnitude'].count().reset_index(name='count'),
+            df1.groupby(['date_time_ph', 'coloring'], observed=False)['magnitude'].count().reset_index(name='count'),
             x='date_time_ph',
             y='count',
             color='coloring',
