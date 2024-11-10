@@ -342,13 +342,13 @@ app.layout = html.Div(children=[
 )
 def updateHousePie(region, clickData, clickStored):
     df = pd.read_csv(housingDataset)
-    filtered_df = df.loc[df['region'] == region]
-    provinceCounts = filtered_df['province'].value_counts()
+    filteredDf = df.loc[df['region'] == region]
+    provinceCounts = filteredDf['province'].value_counts()
     topProvinces = provinceCounts.nlargest(3)
     othersCount = provinceCounts[~provinceCounts.index.isin(topProvinces.index)].sum()
     if othersCount > 0:
-        others_series = pd.Series({'Others': othersCount})
-        topProvinces = pd.concat([topProvinces, others_series])
+        othersSeries = pd.Series({'Others': othersCount})
+        topProvinces = pd.concat([topProvinces, othersSeries])
 
     topProvinces = topProvinces.sort_values(ascending=False).reset_index()
     topProvinces.rename(columns={topProvinces.columns[0]: 'province', topProvinces.columns[1]: 'count'}, inplace=True)
@@ -435,15 +435,15 @@ Output(component_id='houseBoxplot', component_property='figure'),
 )
 def updateHouseBoxplot(region, clickStored):
     df = pd.read_csv(housingDataset)
-    filtered_df = df.loc[df['region'] == region]
-    province_counts = filtered_df['province'].value_counts()
-    topProvinces = province_counts.nlargest(3)
-    others_count = province_counts[~province_counts.index.isin(topProvinces.index)].sum()
-    df1 = filtered_df.copy()
+    filteredDf = df.loc[df['region'] == region]
+    provinceCounts = filteredDf['province'].value_counts()
+    topProvinces = provinceCounts.nlargest(3)
+    othersCount = provinceCounts[~provinceCounts.index.isin(topProvinces.index)].sum()
+    df1 = filteredDf.copy()
     df1['coloring'] = df1['province'].apply(lambda x: x if x in topProvinces.index.tolist() else 'Others')
 
-    if others_count > 0:
-        others_series = pd.Series({'Others': others_count})
+    if othersCount > 0:
+        others_series = pd.Series({'Others': othersCount})
         topProvinces = pd.concat([topProvinces, others_series])
 
     topProvinces = topProvinces.reset_index(name='count').sort_values('count', ascending=False)
@@ -695,10 +695,10 @@ def updateMergedBubbleChart(region, clickStored):
 )
 def updateQuakePie(region, clickData, clickStored):
     df = pd.read_csv(earthquakeDataset)
-    filtered_df = df.loc[df['region'] == region]
-    province_counts = filtered_df['province'].value_counts()
-    topProvinces = province_counts.nlargest(3)
-    othersCount = province_counts[~province_counts.index.isin(topProvinces.index)].sum()
+    filteredDf = df.loc[df['region'] == region]
+    provinceCounts = filteredDf['province'].value_counts()
+    topProvinces = provinceCounts.nlargest(3)
+    othersCount = provinceCounts[~provinceCounts.index.isin(topProvinces.index)].sum()
     if othersCount > 0:
         others_series = pd.Series({'Others': othersCount})
         topProvinces = pd.concat([topProvinces, others_series])
@@ -857,17 +857,17 @@ def updateQuakeBox(region, clickStored):
 )
 def updateQuakeLine(region, clickStored):
     df = pd.read_csv(earthquakeDataset)
-    filtered_df = df.loc[df['region'] == region]
-    province_counts = filtered_df['province'].value_counts()
-    topProvinces = province_counts.nlargest(3)
-    others_count = province_counts[~province_counts.index.isin(topProvinces.index)].sum()
+    filteredDf = df.loc[df['region'] == region]
+    provinceCounts = filteredDf['province'].value_counts()
+    topProvinces = provinceCounts.nlargest(3)
+    othersCount = provinceCounts[~provinceCounts.index.isin(topProvinces.index)].sum()
 
-    df1 = filtered_df.copy()
+    df1 = filteredDf.copy()
     df1['coloring'] = df1['province'].apply(lambda x: x if x in topProvinces.index.tolist() else 'Others')
 
-    if others_count > 0:
-        others_series = pd.Series({'Others': others_count})
-        topProvinces = pd.concat([topProvinces, others_series])
+    if othersCount > 0:
+        othersSeries = pd.Series({'Others': othersCount})
+        topProvinces = pd.concat([topProvinces, othersSeries])
 
     topProvinces = topProvinces.reset_index(name='count').sort_values('count', ascending=False)
     topProvinces.rename(columns={topProvinces.columns[0]: 'province'}, inplace=True)
