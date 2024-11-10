@@ -301,7 +301,26 @@ app.layout = html.Div(children=[
                     dcc.Dropdown(
                         id='quakeDropdown',
                         className='regionDropdown',
-                        options=regionOptions,
+                        options=[
+                            {'label': 'Region I - Ilocos Region', 'value': 'Region I'},
+                            {'label': 'Region II - Cagayan Valley', 'value': 'Region II'},
+                            {'label': 'Region III - Central Luzon', 'value': 'Region III'},
+                            {'label': 'Region IV-A - CALABARZON', 'value': 'Region IV-A'},
+                            {'label': 'Region IV-B MIMAROPA', 'value': 'Region IV-B'},
+                            {'label': 'Region V - Bicol Region', 'value': 'Region V'},
+                            {'label': 'Region VI - Western Visayas', 'value': 'Region VI'},
+                            {'label': 'Region VII - Central Visayas', 'value': 'Region VII'},
+                            {'label': 'Region VIII - Eastern Visayas', 'value': 'Region VIII'},
+                            {'label': 'Region IX - Zamboanga Peninsula', 'value': 'Region IX'},
+                            {'label': 'Region X - Northern Mindanao', 'value': 'Region X'},
+                            {'label': 'Region XI - Davao Region', 'value': 'Region XI'},
+                            {'label': 'Region XII - SOCCSKSARGEN', 'value': 'Region XII'},
+                            {'label': 'Region XIII - Caraga', 'value': 'Region XIII'},
+                            {'label': 'NCR - National Capital Region', 'value': 'NCR'},
+                            {'label': 'CAR - Cordillera Administrative Region', 'value': 'CAR'},
+                            {'label': 'BARMM - Bangsamoro Autonomous Region in Muslim Mindanao', 'value': 'BARMM'},
+                            {'label': 'Region XVIII', 'value': 'Region XVIII'}
+                        ],
                         placeholder='Select region'
                     )
                 ]
