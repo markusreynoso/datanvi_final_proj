@@ -16,28 +16,6 @@ introParagraph3 = ("; ensuring house safety is a crucial consideration for homeb
                   "If you are looking for a home, this can be a tool equipping you to gather essential insights by evaluating "
                   "properties not just by price, number of bedrooms and bathrooms, and land size, but also the proximity "
                   "of houses to earthquake-prone zones–navigating houses with confidence, balancing budget with security in this dynamic landscape.")
-
-
-regionOptions = [
-    {'label': 'Region I - Ilocos Region', 'value': 'Region I'},
-    {'label': 'Region II - Cagayan Valley', 'value': 'Region II'},
-    {'label': 'Region III - Central Luzon', 'value': 'Region III'},
-    {'label': 'Region IV-A - CALABARZON', 'value': 'Region IV-A'},
-    {'label': 'Region IV-B MIMAROPA', 'value': 'Region IV-B'},
-    {'label': 'Region V - Bicol Region', 'value': 'Region V'},
-    {'label': 'Region VI - Western Visayas', 'value': 'Region VI'},
-    {'label': 'Region VII - Central Visayas', 'value': 'Region VII'},
-    {'label': 'Region VIII - Eastern Visayas', 'value': 'Region VIII'},
-    {'label': 'Region IX - Zamboanga Peninsula', 'value': 'Region IX'},
-    {'label': 'Region X - Northern Mindanao', 'value': 'Region X'},
-    {'label': 'Region XI - Davao Region', 'value': 'Region XI'},
-    {'label': 'Region XII - SOCCSKSARGEN', 'value': 'Region XII'},
-    {'label': 'Region XIII - Caraga', 'value': 'Region XIII'},
-    {'label': 'NCR - National Capital Region', 'value': 'NCR'},
-    {'label': 'CAR - Cordillera Administrative Region', 'value': 'CAR'},
-    {'label': 'BARMM - Bangsamoro Autonomous Region in Muslim Mindanao', 'value': 'BARMM'},
-    {'label': 'Region XVIII', 'value': 'Region XVIII'}
-]
 offWhite = "#ebebeb"
 offWhite2 = "#fafafa"
 gamboge = "#EFA00B"
@@ -96,7 +74,26 @@ app.layout = html.Div(children=[
                         dcc.Dropdown(
                             id='mapQuakePanelDrop',
                             className='mapPanelDrop',
-                            options=regionOptions,
+                            options=[
+                                {'label': 'Region I - Ilocos Region', 'value': 'Region I'},
+                                {'label': 'Region II - Cagayan Valley', 'value': 'Region II'},
+                                {'label': 'Region III - Central Luzon', 'value': 'Region III'},
+                                {'label': 'Region IV-A - CALABARZON', 'value': 'Region IV-A'},
+                                {'label': 'Region IV-B MIMAROPA', 'value': 'Region IV-B'},
+                                {'label': 'Region V - Bicol Region', 'value': 'Region V'},
+                                {'label': 'Region VI - Western Visayas', 'value': 'Region VI'},
+                                {'label': 'Region VII - Central Visayas', 'value': 'Region VII'},
+                                {'label': 'Region VIII - Eastern Visayas', 'value': 'Region VIII'},
+                                {'label': 'Region IX - Zamboanga Peninsula', 'value': 'Region IX'},
+                                {'label': 'Region X - Northern Mindanao', 'value': 'Region X'},
+                                {'label': 'Region XI - Davao Region', 'value': 'Region XI'},
+                                {'label': 'Region XII - SOCCSKSARGEN', 'value': 'Region XII'},
+                                {'label': 'Region XIII - Caraga', 'value': 'Region XIII'},
+                                {'label': 'NCR - National Capital Region', 'value': 'NCR'},
+                                {'label': 'CAR - Cordillera Administrative Region', 'value': 'CAR'},
+                                {'label': 'BARMM - Bangsamoro Autonomous Region in Muslim Mindanao', 'value': 'BARMM'},
+                                {'label': 'Region XVIII', 'value': 'Region XVIII'}
+                            ],
                             placeholder='Select region'
                         ),
 
@@ -138,7 +135,25 @@ app.layout = html.Div(children=[
                         dcc.Dropdown(
                             id='mapHousePanelRegionDrop',
                             className='mapPanelDrop',
-                            options=regionOptions,
+                            options=[
+                                {'label': 'Region I - Ilocos Region', 'value': 'Region I'},
+                                {'label': 'Region II - Cagayan Valley', 'value': 'Region II'},
+                                {'label': 'Region III - Central Luzon', 'value': 'Region III'},
+                                {'label': 'Region IV-A - CALABARZON', 'value': 'Region IV-A'},
+                                {'label': 'Region IV-B MIMAROPA', 'value': 'Region IV-B'},
+                                {'label': 'Region V - Bicol Region', 'value': 'Region V'},
+                                {'label': 'Region VI - Western Visayas', 'value': 'Region VI'},
+                                {'label': 'Region VII - Central Visayas', 'value': 'Region VII'},
+                                {'label': 'Region VIII - Eastern Visayas', 'value': 'Region VIII'},
+                                {'label': 'Region IX - Zamboanga Peninsula', 'value': 'Region IX'},
+                                {'label': 'Region X - Northern Mindanao', 'value': 'Region X'},
+                                {'label': 'Region XI - Davao Region', 'value': 'Region XI'},
+                                {'label': 'Region XII - SOCCSKSARGEN', 'value': 'Region XII'},
+                                {'label': 'Region XIII - Caraga', 'value': 'Region XIII'},
+                                {'label': 'NCR - National Capital Region', 'value': 'NCR'},
+                                {'label': 'CAR - Cordillera Administrative Region', 'value': 'CAR'},
+                                {'label': 'Region XVIII', 'value': 'Region XVIII'}
+                            ],
                             placeholder='Select region'
                         ),
 
@@ -194,7 +209,23 @@ app.layout = html.Div(children=[
                     dcc.Dropdown(
                         id='houseDropdown',
                         className='regionDropdown',
-                        options=regionOptions,
+                        options=[
+                            {'label': 'Region I - Ilocos Region', 'value': 'Region I'},
+                            {'label': 'Region II - Cagayan Valley', 'value': 'Region II'},
+                            {'label': 'Region III - Central Luzon', 'value': 'Region III'},
+                            {'label': 'Region IV-A - CALABARZON', 'value': 'Region IV-A'},
+                            {'label': 'Region V - Bicol Region', 'value': 'Region V'},
+                            {'label': 'Region VI - Western Visayas', 'value': 'Region VI'},
+                            {'label': 'Region VII - Central Visayas', 'value': 'Region VII'},
+                            {'label': 'Region IX - Zamboanga Peninsula', 'value': 'Region IX'},
+                            {'label': 'Region X - Northern Mindanao', 'value': 'Region X'},
+                            {'label': 'Region XI - Davao Region', 'value': 'Region XI'},
+                            {'label': 'Region XII - SOCCSKSARGEN', 'value': 'Region XII'},
+                            {'label': 'Region XIII - Caraga', 'value': 'Region XIII'},
+                            {'label': 'NCR - National Capital Region', 'value': 'NCR'},
+                            {'label': 'CAR - Cordillera Administrative Region', 'value': 'CAR'},
+                            {'label': 'Region XVIII', 'value': 'Region XVIII'}
+                        ],
                         placeholder='Select region'
                     )
                 ]
