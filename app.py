@@ -13,12 +13,13 @@ avgMerged = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-se
 colorSequenceList = ['#d52941', '#ff8484', '#4dccbd', '#EFA00B']
 introParagraph1 = ("The Philippines is one of the world’s top earthquake-prone countries according to ")
 introParagraph2 = ("Inquirer")
-introParagraph3 = ("; ensuring house safety is a crucial consideration for homebuyers. Finding a safe and well-priced home requires "
-                  "more than just a location search. Our website combines real estate listings with seismic data to provide "
-                  "insights through an integrated view of housing affordability and evaluate earthquake risk in the Philippines. "
-                  "If you are looking for a home, this can be a tool equipping you to gather essential insights by evaluating "
-                  "properties not just by price, number of bedrooms and bathrooms, and land size, but also the proximity "
-                  "of houses to earthquake-prone zones–navigating houses with confidence, balancing budget with security in this dynamic landscape.")
+introParagraph3 = (
+    "; ensuring house safety is a crucial consideration for homebuyers. Finding a safe and well-priced home requires "
+    "more than just a location search. Our website combines real estate listings with seismic data to provide "
+    "insights through an integrated view of housing affordability and evaluate earthquake risk in the Philippines. "
+    "If you are looking for a home, this can be a tool equipping you to gather essential insights by evaluating "
+    "properties not just by price, number of bedrooms and bathrooms, and land size, but also the proximity "
+    "of houses to earthquake-prone zones–navigating houses with confidence, balancing budget with security in this dynamic landscape.")
 offWhite = "#ebebeb"
 offWhite2 = "#fafafa"
 gamboge = "#EFA00B"
@@ -27,6 +28,19 @@ midBlue = "4dccbd"
 brightRed = "#d52941"
 salmon = "#ff8484"
 yale = '#1B4079'
+
+df1 = pd.read_csv(
+    'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/newPH_earthquake.csv')
+df2 = pd.read_csv(
+    'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/newPH_housing.csv')
+
+url = (
+    'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/philippines-with-regions_.geojson')
+response = requests.get(url)
+phil_regions = response.json()
+
+df2['bedrooms_category'] = df2['bedrooms'].apply(lambda x: '4+' if x > 4 else str(x))
+df2['bathrooms_category'] = df2['bathrooms'].apply(lambda x: '4+' if x > 4 else str(x))
 
 app = Dash(__name__)
 
@@ -52,7 +66,8 @@ app.layout = html.Div(children=[
 
     html.Div(children=html.P([
         introParagraph1,
-        html.A(introParagraph2, href = 'https://newsinfo.inquirer.net/1923394/ph-lands-on-list-of-countries-most-prone-to-quakes'),
+        html.A(introParagraph2,
+               href='https://newsinfo.inquirer.net/1923394/ph-lands-on-list-of-countries-most-prone-to-quakes'),
         introParagraph3
     ])),
 
@@ -77,6 +92,51 @@ app.layout = html.Div(children=[
                                     children=[
                                         'Houses'
                                     ]
+                                ),
+
+                                dcc.Dropdown(
+                                    id='mapHousePanelRegionDrop',
+                                    className='mapPanelDrop',
+                                    options=[
+                                        {'label': 'Region I - Ilocos Region', 'value': 'Region I'},
+                                        {'label': 'Region II - Cagayan Valley', 'value': 'Region II'},
+                                        {'label': 'Region III - Central Luzon', 'value': 'Region III'},
+                                        {'label': 'Region IV-A - CALABARZON', 'value': 'Region IV-A'},
+                                        {'label': 'Region V - Bicol Region', 'value': 'Region V'},
+                                        {'label': 'Region VI - Western Visayas', 'value': 'Region VI'},
+                                        {'label': 'Region VII - Central Visayas', 'value': 'Region VII'},
+                                        {'label': 'Region IX - Zamboanga Peninsula', 'value': 'Region IX'},
+                                        {'label': 'Region X - Northern Mindanao', 'value': 'Region X'},
+                                        {'label': 'Region XI - Davao Region', 'value': 'Region XI'},
+                                        {'label': 'Region XII - SOCCSKSARGEN', 'value': 'Region XII'},
+                                        {'label': 'Region XIII - Caraga', 'value': 'Region XIII'},
+                                        {'label': 'NCR - National Capital Region', 'value': 'NCR'},
+                                        {'label': 'CAR - Cordillera Administrative Region', 'value': 'CAR'},
+                                        {'label': 'Region XVIII', 'value': 'Region XVIII'}
+                                    ],
+                                    placeholder='Select region'
+                                ),
+
+                                dcc.Dropdown(
+                                    id='mapHousePanelBedDrop',
+                                    className='mapPanelDrop',
+                                    multi=True,
+                                    options=[{'label': str(i), 'value': str(i)} for i in ['1', '2', '3', '4+']],
+                                    placeholder='Select number of bedrooms'
+                                ),
+
+                                dcc.Dropdown(
+                                    id='mapHousePanelBathDrop',
+                                    className='mapPanelDrop',
+                                    multi=True,
+                                    options=[{'label': str(i), 'value': str(i)} for i in ['1', '2', '3', '4+']],
+                                    placeholder='Select number of bathrooms'
+                                ),
+
+                                daq.ToggleSwitch(
+                                    id='mapHousePanelSwitch',
+                                    value=True,
+                                    color='#4dccbd',
                                 )
                             ]
                         )
@@ -168,7 +228,7 @@ app.layout = html.Div(children=[
                     id='houseDivBottom',
                     children=[
                         html.Div(
-                            id='houseDivBottomLeft', # scatterplot
+                            id='houseDivBottomLeft',  # scatterplot
                             children=[
                                 dcc.Graph(
                                     id='houseScatterplot',
@@ -178,10 +238,10 @@ app.layout = html.Div(children=[
                         ),
 
                         html.Div(
-                            id='houseDivBottomRight', # i still dont know
+                            id='houseDivBottomRight',  # i still dont know
                             children=[
                                 dcc.Graph(
-                                    id = 'mergedBubblechart',
+                                    id='mergedBubblechart',
                                     figure={}
                                 )
                             ]
@@ -251,9 +311,9 @@ app.layout = html.Div(children=[
                         html.Div(
                             id='quakeDivTopRight',
                             children=
-                                dcc.Graph(
-                                    id='quakeHist',
-                                    figure={}
+                            dcc.Graph(
+                                id='quakeHist',
+                                figure={}
                             )
                         )
                     ]
@@ -273,13 +333,97 @@ app.layout = html.Div(children=[
     html.Br(),
     html.Br(),
 
-
     html.Br(),
     html.Br(),
     html.Br(),
 ])
 
-# Wendell part----------------------------------------------------------------------------------------------------------
+
+# Callbacks----------------------------------------------------------------------------------------------------------
+
+@app.callback(
+    Output('mainMap', 'figure'),
+    [Input('mapHousePanelSwitch', 'value'),
+     Input('mapHousePanelRegionDrop', 'value'),
+     Input('mapHousePanelBedDrop', 'value'),
+     Input('mapHousePanelBathDrop', 'value')]
+)
+def updateMap(showHousing, selectedRegion, selectedBed, selectedBath):
+    filtered_df2 = df2.copy()
+    if selectedRegion:
+        filtered_df2 = filtered_df2[filtered_df2['region'] == selectedRegion]
+    if selectedBed:
+        filtered_df2 = filtered_df2[filtered_df2['bedrooms_category'].isin(selectedBed)]
+    if selectedBath:
+        filtered_df2 = filtered_df2[filtered_df2['bathrooms_category'].isin(selectedBath)]
+
+    eq_map = px.choropleth_mapbox(
+        df1,
+        geojson=phil_regions,
+        featureidkey='properties.name',
+        locations='province',
+        color='average_magnitude',
+        hover_name='region',
+        hover_data=['magnitude', 'date_time_ph', 'depth_in_km'],
+        zoom=4,
+        height=400,
+        center={"lat": 12.8797, "lon": 121.7740},
+        mapbox_style='carto-positron',
+        color_continuous_scale=["#EFA00B", "#d52941"]
+    )
+    eq_map.update_layout(
+        margin={'r': 50, 't': 0, 'l': 0, 'b': 0},
+    )
+
+    hs_map = px.scatter_mapbox(
+        filtered_df2,
+        lat='latitude',
+        lon='longitude',
+        hover_name='province',
+        hover_data=['city', 'price', 'bedrooms', 'bathrooms', 'floor area', 'land area'],
+        size='price',
+        zoom=4,
+        height=400,
+        mapbox_style='carto-positron',
+        color_discrete_sequence=["#4dccbd"]
+    )
+    hs_map.update_layout(
+        margin={'r': 0, 't': 0, 'l': 0, 'b': 0}
+    )
+
+    eq_and_hs_map = go.Figure()
+    for trace in eq_map.data:
+        eq_and_hs_map.add_trace(trace)
+    for trace in hs_map.data:
+        eq_and_hs_map.add_trace(trace)
+    eq_and_hs_map.update_layout(
+        mapbox=dict(
+            style='carto-positron',
+            zoom=5,
+            center={"lat": 12.8797, "lon": 121.7740},
+        ),
+        margin={'r': 0, 't': 0, 'l': 0, 'b': 0},  # Remove unnecessary margins for cleaner layout
+        legend=dict(
+            x=0.02,  # Position near the bottom-left of the map
+            y=0.95,  # Adjust height within the map area
+            bgcolor="rgba(255,255,255,0.6)",  # Optional background for better readability
+            bordercolor="black",  # Optional border for contrast
+            borderwidth=1,        # Border width
+        ),
+        coloraxis=dict(
+            colorscale=['#EFA00B', '#ff8484', '#d52941'],
+            cmin=df1['average_magnitude'].min(),
+            cmax=df1['average_magnitude'].max()
+        )
+    )
+
+
+
+    if showHousing:
+        return eq_and_hs_map
+    else:
+        return eq_map
+
 
 
 @app.callback(
@@ -379,7 +523,7 @@ def updateHousePie(region, clickData, clickStored):
 
 
 @app.callback(
-Output(component_id='houseBoxplot', component_property='figure'),
+    Output(component_id='houseBoxplot', component_property='figure'),
     [Input(component_id='houseDropdown', component_property='value'),
      Input(component_id='donutHouseIsolateStore', component_property='data')]
 )
@@ -423,8 +567,8 @@ def updateHouseBoxplot(region, clickStored):
         df1 = df1.sort_values('coloring')
         fig = px.box(
             df1,
-            x= 'province',
-            y= 'price',
+            x='province',
+            y='price',
             color='coloring',
             color_discrete_sequence=colorSequenceList
         )
@@ -458,7 +602,6 @@ def updateHouseBoxplot(region, clickStored):
         ),
         margin=dict(l=200, r=200, t=50, b=50),
     )
-
 
     fig.update_traces(
         hoverinfo="x+y+text",
@@ -550,7 +693,7 @@ def updateHouseScatterplot(region, clickStored):
 
 @app.callback(
     Output(component_id='mergedBubblechart', component_property='figure'),
-    [Input(component_id='houseDropdown', component_property = 'value'),
+    [Input(component_id='houseDropdown', component_property='value'),
      Input(component_id='donutHouseIsolateStore', component_property='data')]
 )
 def updateMergedBubbleChart(region, clickStored):
@@ -573,7 +716,7 @@ def updateMergedBubbleChart(region, clickStored):
     df2['coloring'] = df2['province'].apply(lambda x: x if x in topProvinces.index.tolist() else 'Others')
 
     topProvinces = topProvinces.reset_index(name='count')
-    topProvinces = topProvinces.rename(columns={topProvinces.columns[0]:'coloring'})
+    topProvinces = topProvinces.rename(columns={topProvinces.columns[0]: 'coloring'})
     df3 = pd.merge(df2, topProvinces).sort_values('count', ascending=False)
 
     if clickStored:
@@ -632,6 +775,7 @@ def updateMergedBubbleChart(region, clickStored):
     )
 
     return fig
+
 
 # Wendell part----------------------------------------------------------------------------------------------------------
 
@@ -875,6 +1019,7 @@ def updateQuakeLine(region, clickStored):
     )
 
     return fig
+
 
 @app.callback(
     Output(component_id='housePie', component_property='clickData'),
