@@ -24,7 +24,7 @@ offWhite = "#ebebeb"
 offWhite2 = "#fafafa"
 gamboge = "#EFA00B"
 darkGreen = "#022f40"
-midBlue = "4dccbd"
+midBlue = "#4dccbd"
 brightRed = "#d52941"
 salmon = "#ff8484"
 yale = '#1B4079'
@@ -397,25 +397,33 @@ def updateMap(showHousing, selectedRegion, selectedBed, selectedBath):
     for trace in hs_map.data:
         eq_and_hs_map.add_trace(trace)
     eq_and_hs_map.update_layout(
+        paper_bgcolor=darkGreen,
         mapbox=dict(
             style='carto-positron',
             zoom=5,
             center={"lat": 12.8797, "lon": 121.7740},
         ),
-        margin={'r': 0, 't': 0, 'l': 0, 'b': 0},  # Remove unnecessary margins for cleaner layout
+        margin={'r': 0, 't': 0, 'l': 0, 'b': 0},
         legend=dict(
-            x=0.02,  # Position near the bottom-left of the map
-            y=0.95,  # Adjust height within the map area
-            bgcolor="rgba(255,255,255,0.6)",  # Optional background for better readability
-            bordercolor="black",  # Optional border for contrast
-            borderwidth=1,        # Border width
+            font=dict(
+                color="white"
+            ),
+            x=0,
+            y=0.95,
+            bgcolor="rgba(255,255,255,0.6)",
+            bordercolor="black",
+            borderwidth=1,
         ),
         coloraxis=dict(
-            colorscale=['#EFA00B', '#ff8484', '#d52941'],
+            colorscale=['#ff8484', '#EFA00B', '#d52941'],
             cmin=df1['average_magnitude'].min(),
             cmax=df1['average_magnitude'].max()
+        ),
+        coloraxis_colorbar=dict(
+            tickfont=dict(color="white")
         )
     )
+
 
 
 
