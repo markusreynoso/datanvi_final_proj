@@ -1,8 +1,11 @@
 from dash import Dash, html, dcc
 from dash.dependencies import Input, Output
 import plotly.express as px
+import plotly.graph_objects as go
 import pandas as pd
 import dash_daq as daq
+import json
+import requests
 
 housingDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/newPH_housing.csv'
 earthquakeDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquake.csv'
@@ -60,140 +63,37 @@ app.layout = html.Div(children=[
 
     html.Center(
         html.Div(
-            id='mapControlsDiv',
+            id='mapSectionMainDiv',
             children=[
                 html.Div(
-                    id='mapQuakeControlsDiv',
-                    className='mapControlPanel',
+                    id='mapSectionMainDivLeft',
                     children=[
-                        html.H3(
-                            className='mapPanelTitle',
-                            children='Earthquakes'
-                        ),
-
-                        dcc.Dropdown(
-                            id='mapQuakePanelDrop',
-                            className='mapPanelDrop',
-                            options=[
-                                {'label': 'Region I - Ilocos Region', 'value': 'Region I'},
-                                {'label': 'Region II - Cagayan Valley', 'value': 'Region II'},
-                                {'label': 'Region III - Central Luzon', 'value': 'Region III'},
-                                {'label': 'Region IV-A - CALABARZON', 'value': 'Region IV-A'},
-                                {'label': 'Region IV-B MIMAROPA', 'value': 'Region IV-B'},
-                                {'label': 'Region V - Bicol Region', 'value': 'Region V'},
-                                {'label': 'Region VI - Western Visayas', 'value': 'Region VI'},
-                                {'label': 'Region VII - Central Visayas', 'value': 'Region VII'},
-                                {'label': 'Region VIII - Eastern Visayas', 'value': 'Region VIII'},
-                                {'label': 'Region IX - Zamboanga Peninsula', 'value': 'Region IX'},
-                                {'label': 'Region X - Northern Mindanao', 'value': 'Region X'},
-                                {'label': 'Region XI - Davao Region', 'value': 'Region XI'},
-                                {'label': 'Region XII - SOCCSKSARGEN', 'value': 'Region XII'},
-                                {'label': 'Region XIII - Caraga', 'value': 'Region XIII'},
-                                {'label': 'NCR - National Capital Region', 'value': 'NCR'},
-                                {'label': 'CAR - Cordillera Administrative Region', 'value': 'CAR'},
-                                {'label': 'BARMM - Bangsamoro Autonomous Region in Muslim Mindanao', 'value': 'BARMM'},
-                                {'label': 'Region XVIII', 'value': 'Region XVIII'}
-                            ],
-                            placeholder='Select region'
-                        ),
-
                         html.Div(
-                            children='Filter by magnitude',
-                            id='mapQuakePanelTextDiv'
-                        ),
-
-                        dcc.RangeSlider(
-                            0,
-                            10,
-                            0.1,
-                            value=[0, 10],
-                            marks={
-                                0: {'label': '0', 'style': {'color': gamboge}},
-                                10: {'label': '10', 'style': {'color': salmon}}},
-                            tooltip={'always_visible': False},
-                            id='mapQuakePanelSlider',
-                        ),
-
-                        daq.ToggleSwitch(
-                            className='mapPanelSwitch',
-                            id='mapQuakePanelSwitch',
-                            value=False,
-                            color='#4dccbd'
+                            id='houseControlsDiv',
+                            children=[
+                                html.H3(
+                                    id='houseControlsTitle',
+                                    className='mapPanelTitle',
+                                    children=[
+                                        'Houses'
+                                    ]
+                                )
+                            ]
                         )
                     ]
                 ),
 
                 html.Div(
-                    id='mapHouseControlsDiv',
-                    className='mapControlPanel',
+                    id='mapSectionMainDivRight',
                     children=[
-                        html.H3(
-                            className='mapPanelTitle',
-                            children='Houses'
-                        ),
-
-                        dcc.Dropdown(
-                            id='mapHousePanelRegionDrop',
-                            className='mapPanelDrop',
-                            options=[
-                                {'label': 'Region I - Ilocos Region', 'value': 'Region I'},
-                                {'label': 'Region II - Cagayan Valley', 'value': 'Region II'},
-                                {'label': 'Region III - Central Luzon', 'value': 'Region III'},
-                                {'label': 'Region IV-A - CALABARZON', 'value': 'Region IV-A'},
-                                {'label': 'Region IV-B MIMAROPA', 'value': 'Region IV-B'},
-                                {'label': 'Region V - Bicol Region', 'value': 'Region V'},
-                                {'label': 'Region VI - Western Visayas', 'value': 'Region VI'},
-                                {'label': 'Region VII - Central Visayas', 'value': 'Region VII'},
-                                {'label': 'Region VIII - Eastern Visayas', 'value': 'Region VIII'},
-                                {'label': 'Region IX - Zamboanga Peninsula', 'value': 'Region IX'},
-                                {'label': 'Region X - Northern Mindanao', 'value': 'Region X'},
-                                {'label': 'Region XI - Davao Region', 'value': 'Region XI'},
-                                {'label': 'Region XII - SOCCSKSARGEN', 'value': 'Region XII'},
-                                {'label': 'Region XIII - Caraga', 'value': 'Region XIII'},
-                                {'label': 'NCR - National Capital Region', 'value': 'NCR'},
-                                {'label': 'CAR - Cordillera Administrative Region', 'value': 'CAR'},
-                                {'label': 'Region XVIII', 'value': 'Region XVIII'}
-                            ],
-                            placeholder='Select region'
-                        ),
-
-                        dcc.Dropdown(
-                            id='mapHousePanelBedDrop',
-                            className='mapPanelDrop',
-                            multi=True,
-                            options=[
-                                {'label': '1', 'value': 1},
-                                {'label': '2', 'value': 2},
-                                {'label': '3', 'value': 3},
-                                {'label': '4+', 'value': 4}],
-                            placeholder='Select number of bedrooms'
-                        ),
-
-                        dcc.Dropdown(
-                            id='mapHousePanelBathDrop',
-                            className='mapPanelDrop',
-                            multi=True,
-                            options=[
-                                {'label': '1', 'value': 1},
-                                {'label': '2', 'value': 2},
-                                {'label': '3', 'value': 3},
-                                {'label': '4+', 'value': 4}],
-                            placeholder='Select number of bathrooms'
-                        ),
-
-                        daq.ToggleSwitch(
-                            className='mapPanelSwitch',
-                            id='mapHousePanelSwitch',
-                            value=False,
-                            color='#4dccbd'
+                        dcc.Graph(
+                            id='mainMap'
                         )
                     ]
                 )
-
             ]
         )
     ),
-    html.Center(html.Div(id='mapDiv', children=[dcc.Graph(id='mainMap')])), #TODO Dave
 
     html.Br(),
     html.Br(),
