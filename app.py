@@ -407,7 +407,7 @@ def updateMap(selectedRegion, selectedBed, selectedBath):
         zoom=4,
         height=400,
         mapbox_style='carto-positron',
-        color_discrete_sequence=["#4dccbd"]
+        color_discrete_sequence=["#022f40"]
     )
     hs_map.update_layout(
         margin={'r': 0, 't': 0, 'l': 0, 'b': 0}
@@ -437,7 +437,7 @@ def updateMap(selectedRegion, selectedBed, selectedBath):
             borderwidth=1,
         ),
         coloraxis=dict(
-            colorscale=['#ff8484', '#EFA00B', '#d52941'],
+            colorscale=['#4dccbd', '#EFA00B', '#d52941'],
             cmin=df1['average_magnitude'].min(),
             cmax=df1['average_magnitude'].max()
         ),
