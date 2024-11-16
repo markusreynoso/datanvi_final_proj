@@ -396,7 +396,6 @@ def updateMap(selectedRegion, selectedBed, selectedBath):
     for trace in hs_map.data:
         eq_and_hs_map.add_trace(trace)
     eq_and_hs_map.update_layout(
-        paper_bgcolor=darkGreen,
         mapbox=dict(
             style='carto-positron',
             zoom=5,
@@ -410,7 +409,7 @@ def updateMap(selectedRegion, selectedBed, selectedBath):
             x=0,
             y=0.95,
             bgcolor="rgba(255,255,255,0.6)",
-            bordercolor="black",
+            bordercolor="#022f40",
             borderwidth=1,
         ),
         coloraxis=dict(
@@ -419,18 +418,18 @@ def updateMap(selectedRegion, selectedBed, selectedBath):
             cmax=df1['average_magnitude'].max()
         ),
         coloraxis_colorbar=dict(
-            tickfont=dict(color="white"),
+            tickfont=dict(color="black"),
             title=dict(
                 text="Average Magnitude",
-                font=dict(color="white"),
-                side='right'
+                font=dict(color="#022f40"),
+                side='top'
             ),
+            x=0.05,
+            xanchor='left',  # Align the left side of the color bar at the x position
+            y=0.5,  # Center the color bar vertically
+            yanchor='middle',  # Align the middle of the color bar at the y position
         )
     )
-
-
-
-
 
     return eq_and_hs_map
 
