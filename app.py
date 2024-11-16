@@ -278,7 +278,6 @@ app.layout = html.Div(children=[
                             {'label': 'Region II - Cagayan Valley', 'value': 'Region II'},
                             {'label': 'Region III - Central Luzon', 'value': 'Region III'},
                             {'label': 'Region IV-A - CALABARZON', 'value': 'Region IV-A'},
-                            {'label': 'Region IV-B MIMAROPA', 'value': 'Region IV-B'},
                             {'label': 'Region V - Bicol Region', 'value': 'Region V'},
                             {'label': 'Region VI - Western Visayas', 'value': 'Region VI'},
                             {'label': 'Region VII - Central Visayas', 'value': 'Region VII'},
@@ -604,9 +603,7 @@ def updateHouseBoxplot(region, clickStored):
 
     fig.update_layout(
         margin=dict(l=0, r=0, t=10, b=10),
-        xaxis=dict(title='', automargin=False),
-        yaxis=dict(title='', automargin=False),
-        width=1100,
+
         showlegend=False,
         paper_bgcolor=offWhite2,
         title=dict(
