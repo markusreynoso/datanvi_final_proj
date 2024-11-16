@@ -365,14 +365,19 @@ def updateMap(showHousing, selectedRegion, selectedBed, selectedBath):
         color='average_magnitude',
         hover_name='region',
         hover_data=['magnitude', 'date_time_ph', 'depth_in_km'],
-        zoom=4,
+        zoom=5,
         height=400,
         center={"lat": 12.8797, "lon": 121.7740},
         mapbox_style='carto-positron',
         color_continuous_scale=["#EFA00B", "#d52941"]
     )
     eq_map.update_layout(
-        margin={'r': 50, 't': 0, 'l': 0, 'b': 0},
+        margin={'r': 0, 't': 0, 'l': 0, 'b': 0},
+        coloraxis=dict(
+            colorscale=['#4dccbd', '#EFA00B', '#d52941'],
+            cmin=df1['average_magnitude'].min(),
+            cmax=df1['average_magnitude'].max()
+        )
     )
 
     hs_map = px.scatter_mapbox(
@@ -385,7 +390,7 @@ def updateMap(showHousing, selectedRegion, selectedBed, selectedBath):
         zoom=4,
         height=400,
         mapbox_style='carto-positron',
-        color_discrete_sequence=["#4dccbd"]
+        color_discrete_sequence=["#022f40"]
     )
     hs_map.update_layout(
         margin={'r': 0, 't': 0, 'l': 0, 'b': 0}
@@ -415,7 +420,7 @@ def updateMap(showHousing, selectedRegion, selectedBed, selectedBath):
             borderwidth=1,
         ),
         coloraxis=dict(
-            colorscale=['#ff8484', '#EFA00B', '#d52941'],
+            colorscale=['#4dccbd', '#EFA00B', '#d52941'],
             cmin=df1['average_magnitude'].min(),
             cmax=df1['average_magnitude'].max()
         ),
@@ -423,9 +428,6 @@ def updateMap(showHousing, selectedRegion, selectedBed, selectedBath):
             tickfont=dict(color="white")
         )
     )
-
-
-
 
     if showHousing:
         return eq_and_hs_map
