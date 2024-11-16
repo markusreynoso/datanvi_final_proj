@@ -373,7 +373,7 @@ def updateMap(selectedRegion, selectedBed, selectedBath):
         locations='province',
         color='average_magnitude',
         hover_name='region',
-        hover_data=['magnitude', 'date_time_ph', 'depth_in_km'],
+        hover_data=['average_magnitude'],
         zoom=4,
         height=400,
         center={"lat": 12.8797, "lon": 121.7740},
