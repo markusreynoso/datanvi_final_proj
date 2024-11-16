@@ -165,7 +165,7 @@ app.layout = html.Div(children=[
                     html.H2(className='sectionTitle', children='Houses - '),
                     html.H2(id='houseRegionText', className='sectionTitle'),
                     dcc.Dropdown(
-                        id='houseDropdown',
+                        id='graphsDropdown',
                         className='regionDropdown',
                         options=[
                             {'label': 'Region I - Ilocos Region', 'value': 'Region I'},
@@ -271,30 +271,7 @@ app.layout = html.Div(children=[
                 children=[
                     html.H2(className='sectionTitle', children='Earthquakes - '),
                     html.H2(id='quakeRegionText', className='dynamicText'),
-                    dcc.Dropdown(
-                        id='quakeDropdown',
-                        className='regionDropdown',
-                        options=[
-                            {'label': 'Region I - Ilocos Region', 'value': 'Region I'},
-                            {'label': 'Region II - Cagayan Valley', 'value': 'Region II'},
-                            {'label': 'Region III - Central Luzon', 'value': 'Region III'},
-                            {'label': 'Region IV-A - CALABARZON', 'value': 'Region IV-A'},
-                            {'label': 'Region V - Bicol Region', 'value': 'Region V'},
-                            {'label': 'Region VI - Western Visayas', 'value': 'Region VI'},
-                            {'label': 'Region VII - Central Visayas', 'value': 'Region VII'},
-                            {'label': 'Region VIII - Eastern Visayas', 'value': 'Region VIII'},
-                            {'label': 'Region IX - Zamboanga Peninsula', 'value': 'Region IX'},
-                            {'label': 'Region X - Northern Mindanao', 'value': 'Region X'},
-                            {'label': 'Region XI - Davao Region', 'value': 'Region XI'},
-                            {'label': 'Region XII - SOCCSKSARGEN', 'value': 'Region XII'},
-                            {'label': 'Region XIII - Caraga', 'value': 'Region XIII'},
-                            {'label': 'NCR - National Capital Region', 'value': 'NCR'},
-                            {'label': 'CAR - Cordillera Administrative Region', 'value': 'CAR'},
-                            {'label': 'BARMM - Bangsamoro Autonomous Region in Muslim Mindanao', 'value': 'BARMM'},
-                            {'label': 'Region XVIII', 'value': 'Region XVIII'}
-                        ],
-                        placeholder='Select region'
-                    )
+
                 ]
             )
         ]
@@ -448,7 +425,6 @@ def updateMap(selectedRegion, selectedBed, selectedBath):
                 font=dict(color="white"),
                 side='right'
             ),
-            standoff=10
         )
     )
 
@@ -465,7 +441,7 @@ def updateMap(selectedRegion, selectedBed, selectedBath):
     [Output(component_id='housePie', component_property='figure'),
      Output(component_id='houseRegionText', component_property='children'),
      Output(component_id='donutHouseIsolateStore', component_property='data')],
-    [Input(component_id='houseDropdown', component_property='value'),
+    [Input(component_id='graphsDropdown', component_property='value'),
      Input(component_id='housePie', component_property='clickData'),
      Input(component_id='donutHouseIsolateStore', component_property='data')]
 )
@@ -559,7 +535,7 @@ def updateHousePie(region, clickData, clickStored):
 
 @app.callback(
     Output(component_id='houseBoxplot', component_property='figure'),
-    [Input(component_id='houseDropdown', component_property='value'),
+    [Input(component_id='graphsDropdown', component_property='value'),
      Input(component_id='donutHouseIsolateStore', component_property='data')]
 )
 def updateHouseBoxplot(region, clickStored):
@@ -650,7 +626,7 @@ def updateHouseBoxplot(region, clickStored):
 
 @app.callback(
     Output(component_id='houseScatterplot', component_property='figure'),
-    [Input(component_id='houseDropdown', component_property='value'),
+    [Input(component_id='graphsDropdown', component_property='value'),
      Input(component_id='donutHouseIsolateStore', component_property='data')]
 )
 def updateHouseScatterplot(region, clickStored):
@@ -730,7 +706,7 @@ def updateHouseScatterplot(region, clickStored):
 
 @app.callback(
     Output(component_id='mergedBubblechart', component_property='figure'),
-    [Input(component_id='houseDropdown', component_property='value'),
+    [Input(component_id='graphsDropdown', component_property='value'),
      Input(component_id='donutHouseIsolateStore', component_property='data')]
 )
 def updateMergedBubbleChart(region, clickStored):
@@ -820,7 +796,7 @@ def updateMergedBubbleChart(region, clickStored):
     [Output(component_id='quakePie', component_property='figure'),
      Output(component_id='quakeRegionText', component_property='children'),
      Output(component_id='donutQuakeIsolateStore', component_property='data')],
-    [Input(component_id='quakeDropdown', component_property='value'),
+    [Input(component_id='graphsDropdown', component_property='value'),
      Input(component_id='quakePie', component_property='clickData'),
      Input(component_id='donutQuakeIsolateStore', component_property='data')]
 )
@@ -913,7 +889,7 @@ def updateQuakePie(region, clickData, clickStored):
 
 @app.callback(
     Output(component_id='quakeHist', component_property='figure'),
-    [Input(component_id='quakeDropdown', component_property='value'),
+    [Input(component_id='graphsDropdown', component_property='value'),
      Input(component_id='donutQuakeIsolateStore', component_property='data')]
 )
 def updateQuakeBox(region, clickStored):
@@ -983,7 +959,7 @@ def updateQuakeBox(region, clickStored):
 
 @app.callback(
     Output(component_id='quakeLine', component_property='figure'),
-    [Input(component_id='quakeDropdown', component_property='value'),
+    [Input(component_id='graphsDropdown', component_property='value'),
      Input(component_id='donutQuakeIsolateStore', component_property='data')]
 )
 def updateQuakeLine(region, clickStored):
@@ -1060,7 +1036,7 @@ def updateQuakeLine(region, clickStored):
 
 @app.callback(
     Output(component_id='housePie', component_property='clickData'),
-    Input(component_id='houseDropdown', component_property='value')
+    Input(component_id='graphsDropdown', component_property='value')
 )
 def resetClickData(value):
     return None
