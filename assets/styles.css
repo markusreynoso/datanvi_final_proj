@@ -61,20 +61,30 @@ h2 {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
-    overflow: hidden;
     border-radius: 30px;
-    overflow: hidden;
 }
 
 #mapSectionMainDivLeft{
-    height: 70%;
+    height: 100%;
     width: 35%;
     border-radius: 30px;
-    overflow: hidden;
+    display: flex;
+    padding-top: 40px;
+    box-sizing: border-box;
+    flex-direction: column;
+    justify-content: space-evenly;
 }
 
+#mapSectionTitle{
+    padding: 0;
+    margin: 0;
+    height:20%;
+    margin-bottom: 30px;
+}
 #mapSectionMainDivRight{
     height: 100%;
+    width: 70%;
+    margin-left: 50px;
     border-radius: 30px;
     overflow: hidden;
 }
@@ -86,8 +96,9 @@ h2 {
 #houseControlsDiv{
     background-color: var(--dark-color);
     width: 100%;
-    height: 100%;
+    height: 60%;
     padding-top: 30px;
+    border-radius: 30px;
 }
 
 .mapPanelTitle{

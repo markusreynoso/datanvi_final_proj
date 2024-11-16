@@ -86,6 +86,16 @@ app.layout = html.Div(children=[
                     id='mapSectionMainDivLeft',
                     children=[
                         html.Div(
+                            id='mapSectionTitleDiv',
+                            children=[
+                                html.H2(
+                                    id='mapSectionTitle',
+                                    children=['Integrated Map']
+                                )
+                            ]
+                        ),
+
+                        html.Div(
                             id='houseControlsDiv',
                             children=[
                                 html.H3(
