@@ -442,7 +442,13 @@ def updateMap(selectedRegion, selectedBed, selectedBath):
             cmax=df1['average_magnitude'].max()
         ),
         coloraxis_colorbar=dict(
-            tickfont=dict(color="white")
+            tickfont=dict(color="white"),
+            title=dict(
+                text="Average Magnitude",
+                font=dict(color="white"),
+                side='right'
+            ),
+            standoff=10
         )
     )
 
