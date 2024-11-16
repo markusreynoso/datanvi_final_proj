@@ -7,8 +7,8 @@ import dash_daq as daq
 import json
 import requests
 
-housingDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/newPH_housing.csv'
-earthquakeDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquake.csv'
+housingDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/housingCleaned.csv'
+earthquakeDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquakeCleaned.csv'
 avgMerged = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/merged_house_eq.csv'
 colorSequenceList = ['#d52941', '#ff8484', '#4dccbd', '#EFA00B']
 introParagraph1 = ("The Philippines is one of the world’s top earthquake-prone countries according to ")
@@ -19,7 +19,9 @@ introParagraph3 = (
     "insights through an integrated view of housing affordability and evaluate earthquake risk in the Philippines. "
     "If you are looking for a home, this can be a tool equipping you to gather essential insights by evaluating "
     "properties not just by price, number of bedrooms and bathrooms, and land size, but also the proximity "
-    "of houses to earthquake-prone zones–navigating houses with confidence, balancing budget with security in this dynamic landscape.")
+    "of houses to earthquake-prone zones–navigating houses with confidence, balancing budget with security in this dynamic landscape."
+    " Our limitation is that there is no data in Region IV-B (MIMAROPA) in the housing dataset, and so, the said region will not be"
+    " shown in this website.")
 offWhite = "#ebebeb"
 offWhite2 = "#fafafa"
 gamboge = "#EFA00B"
@@ -30,9 +32,9 @@ salmon = "#ff8484"
 yale = '#1B4079'
 
 df1 = pd.read_csv(
-    'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/newPH_earthquake.csv')
+    'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquakeCleaned.csv')
 df2 = pd.read_csv(
-    'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/newPH_housing.csv')
+    'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/housingCleaned.csv')
 
 url = (
     'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/philippines-with-regions_.geojson')
@@ -73,7 +75,6 @@ app.layout = html.Div(children=[
 
     html.Div(className='spacer'),
 
-    html.Br(),
     html.Br(),
 
     html.Center(
@@ -133,11 +134,7 @@ app.layout = html.Div(children=[
                                     placeholder='Select number of bathrooms'
                                 ),
 
-                                daq.ToggleSwitch(
-                                    id='mapHousePanelSwitch',
-                                    value=True,
-                                    color='#4dccbd',
-                                )
+
                             ]
                         )
                     ]
@@ -218,7 +215,12 @@ app.layout = html.Div(children=[
                             children=[
                                 dcc.Graph(
                                     id='houseBoxplot',
-                                    figure={}
+                                    figure={},
+                                    style={
+                                        'height': '100%',
+                                        'width': '100%',
+                                        'overflow' : 'hidden'
+                                    }
                                 )
                             ]
                         )
@@ -228,21 +230,31 @@ app.layout = html.Div(children=[
                     id='houseDivBottom',
                     children=[
                         html.Div(
-                            id='houseDivBottomLeft',  # scatterplot
+                            id='houseDivBottomLeft',
                             children=[
                                 dcc.Graph(
                                     id='houseScatterplot',
-                                    figure={}
+                                    figure={},
+                                    style={
+                                        'height': '100%',
+                                        'width': '100%',
+                                        'overflow' : 'hidden'
+                                    }
                                 )
                             ]
                         ),
 
                         html.Div(
-                            id='houseDivBottomRight',  # i still dont know
+                            id='houseDivBottomRight',
                             children=[
                                 dcc.Graph(
                                     id='mergedBubblechart',
-                                    figure={}
+                                    figure={},
+                                    style={
+                                        'height': '100%',
+                                        'width': '100%',
+                                        'overflow' : 'hidden'
+                                    }
                                 )
                             ]
                         )
@@ -313,7 +325,12 @@ app.layout = html.Div(children=[
                             children=
                             dcc.Graph(
                                 id='quakeHist',
-                                figure={}
+                                figure={},
+                                style={
+                                        'height': '100%',
+                                        'width': '100%',
+                                        'overflow' : 'hidden'
+                                    }
                             )
                         )
                     ]
@@ -323,6 +340,11 @@ app.layout = html.Div(children=[
                     children=[
                         dcc.Graph(
                             id='quakeLine',
+                            style={
+                                'height': '100%',
+                                'width': '100%',
+                                'overflow' : 'hidden'
+                            }
                         )
                     ]
                 )
@@ -343,12 +365,12 @@ app.layout = html.Div(children=[
 
 @app.callback(
     Output('mainMap', 'figure'),
-    [Input('mapHousePanelSwitch', 'value'),
+    [
      Input('mapHousePanelRegionDrop', 'value'),
      Input('mapHousePanelBedDrop', 'value'),
      Input('mapHousePanelBathDrop', 'value')]
 )
-def updateMap(showHousing, selectedRegion, selectedBed, selectedBath):
+def updateMap(selectedRegion, selectedBed, selectedBath):
     filtered_df2 = df2.copy()
     if selectedRegion:
         filtered_df2 = filtered_df2[filtered_df2['region'] == selectedRegion]
@@ -427,10 +449,9 @@ def updateMap(showHousing, selectedRegion, selectedBed, selectedBath):
 
 
 
-    if showHousing:
-        return eq_and_hs_map
-    else:
-        return eq_map
+
+    return eq_and_hs_map
+
 
 
 
@@ -582,6 +603,10 @@ def updateHouseBoxplot(region, clickStored):
         )
 
     fig.update_layout(
+        margin=dict(l=0, r=0, t=10, b=10),
+        xaxis=dict(title='', automargin=False),
+        yaxis=dict(title='', automargin=False),
+        width=1100,
         showlegend=False,
         paper_bgcolor=offWhite2,
         title=dict(
