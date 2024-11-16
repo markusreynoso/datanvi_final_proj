@@ -22,6 +22,7 @@ introParagraph3 = (
     "of houses to earthquake-prone zones–navigating houses with confidence, balancing budget with security in this dynamic landscape."
     " Our limitation is that there is no data in Region IV-B (MIMAROPA) in the housing dataset, and so, the said region will not be"
     " shown in this website.")
+
 offWhite = "#ebebeb"
 offWhite2 = "#fafafa"
 gamboge = "#EFA00B"
