@@ -578,7 +578,8 @@ def updateHouseBoxplot(region, clickStored):
             x='province',
             y='price',
             color='coloring',
-            color_discrete_sequence=[colorSequenceList[colorIdx]]
+            color_discrete_sequence=[colorSequenceList[colorIdx]],
+            hover_data={'province': False},
         )
 
     else:
@@ -590,7 +591,8 @@ def updateHouseBoxplot(region, clickStored):
             x='province',
             y='price',
             color='coloring',
-            color_discrete_sequence=colorSequenceList
+            color_discrete_sequence=colorSequenceList,
+            hover_data = {'province': False},
         )
 
     fig.update_layout(
@@ -626,8 +628,8 @@ def updateHouseBoxplot(region, clickStored):
     )
 
     fig.update_traces(
-        hoverinfo="x+y+text",
-        hovertemplate="<b>Category:</b> %{x}<br><b>Value:</b> %{y}<extra></extra>"
+        hoverinfo="y",
+        hovertemplate="Value:</b> %{y}<extra></extra>"
     )
 
     return fig
