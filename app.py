@@ -8,7 +8,7 @@ import json
 import requests
 
 housingDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/housingCleaned.csv'
-earthquakeDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquakeCleaned.csv'
+earthquakeDataset = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquakeCleanedNov21.csv'
 avgMerged = 'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/merged_house_eq.csv'
 colorSequenceList = ['#d52941', '#ff8484', '#4dccbd', '#EFA00B']
 introParagraph1 = ("The Philippines is one of the world’s top earthquake-prone countries according to ")
@@ -33,7 +33,7 @@ salmon = "#ff8484"
 yale = '#1B4079'
 
 df1 = pd.read_csv(
-    'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquakeCleaned.csv')
+    'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquakeCleanedNov21.csv')
 df2 = pd.read_csv(
     'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/housingCleaned.csv')
 
