@@ -33,9 +33,9 @@ salmon = "#ff8484"
 yale = '#1B4079'
 
 df1 = pd.read_csv(
-    'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquakeCleanedNov21.csv')
+    'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/earthquakeCleanedNov21.csv', low_memory=False)
 df2 = pd.read_csv(
-    'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/housingCleaned.csv')
+    'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/housingCleaned.csv', low_memory=False)
 
 url = (
     'https://raw.githubusercontent.com/markusreynoso/datanvi-datasets-server/refs/heads/main/philippines-with-regions_.geojson')
@@ -455,7 +455,7 @@ def updateMap(selectedRegion, selectedBed, selectedBath):
      Input(component_id='donutHouseIsolateStore', component_property='data')]
 )
 def updateHousePie(region, clickData, clickStored):
-    df = pd.read_csv(housingDataset)
+    df = pd.read_csv(housingDataset, low_memory=False)
     filteredDf = df.loc[df['region'] == region]
     provinceCounts = filteredDf['province'].value_counts()
     topProvinces = provinceCounts.nlargest(3)
@@ -548,7 +548,7 @@ def updateHousePie(region, clickData, clickStored):
      Input(component_id='donutHouseIsolateStore', component_property='data')]
 )
 def updateHouseBoxplot(region, clickStored):
-    df = pd.read_csv(housingDataset)
+    df = pd.read_csv(housingDataset, low_memory=False)
     filteredDf = df.loc[df['region'] == region]
     provinceCounts = filteredDf['province'].value_counts()
     topProvinces = provinceCounts.nlargest(3)
@@ -641,7 +641,7 @@ def updateHouseBoxplot(region, clickStored):
      Input(component_id='donutHouseIsolateStore', component_property='data')]
 )
 def updateHouseScatterplot(region, clickStored):
-    df = pd.read_csv(housingDataset)
+    df = pd.read_csv(housingDataset, low_memory=False)
     filtered_df = df.loc[df['region'] == region]
     province_counts = filtered_df['province'].value_counts()
     topProvinces = province_counts.nlargest(3)
@@ -722,7 +722,7 @@ def updateHouseScatterplot(region, clickStored):
 )
 def updateMergedBubbleChart(region, clickStored):
     # Obtaining the top 3
-    df = pd.read_csv(housingDataset)
+    df = pd.read_csv(housingDataset, low_memory=False)
     filtered_df = df.loc[df['region'] == region]
     provinceCounts = filtered_df['province'].value_counts()
     topProvinces = provinceCounts.nlargest(3)
@@ -812,7 +812,7 @@ def updateMergedBubbleChart(region, clickStored):
      Input(component_id='donutQuakeIsolateStore', component_property='data')]
 )
 def updateQuakePie(region, clickData, clickStored):
-    df = pd.read_csv(earthquakeDataset)
+    df = pd.read_csv(earthquakeDataset, low_memory=False)
     filteredDf = df.loc[df['region'] == region]
     provinceCounts = filteredDf['province'].value_counts()
     topProvinces = provinceCounts.nlargest(3)
@@ -904,7 +904,7 @@ def updateQuakePie(region, clickData, clickStored):
      Input(component_id='donutQuakeIsolateStore', component_property='data')]
 )
 def updateQuakeBox(region, clickStored):
-    df = pd.read_csv(earthquakeDataset)
+    df = pd.read_csv(earthquakeDataset, low_memory=False)
     filteredDf = df.loc[df['region'] == region]
     provinceCounts = filteredDf['province'].value_counts()
     topProvinces = provinceCounts.nlargest(3)
@@ -974,7 +974,7 @@ def updateQuakeBox(region, clickStored):
      Input(component_id='donutQuakeIsolateStore', component_property='data')]
 )
 def updateQuakeLine(region, clickStored):
-    df = pd.read_csv(earthquakeDataset)
+    df = pd.read_csv(earthquakeDataset, low_memory=False)
     filteredDf = df.loc[df['region'] == region]
     provinceCounts = filteredDf['province'].value_counts()
     topProvinces = provinceCounts.nlargest(3)
