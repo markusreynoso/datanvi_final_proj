@@ -399,7 +399,7 @@ def updateMap(selectedRegion, selectedBed, selectedBath):
         zoom=4,
         height=400,
         mapbox_style='carto-positron',
-        color_discrete_sequence=["#022f40"]
+        color_discrete_sequence=[gamboge]
     )
     hs_map.update_layout(
         margin={'r': 0, 't': 0, 'l': 0, 'b': 0}
@@ -428,7 +428,7 @@ def updateMap(selectedRegion, selectedBed, selectedBath):
             borderwidth=1,
         ),
         coloraxis=dict(
-            colorscale=['#4dccbd', '#EFA00B', '#d52941'],
+            colorscale=[darkGreen, midBlue, salmon, brightRed],
             cmin=df1['average_magnitude'].min(),
             cmax=df1['average_magnitude'].max()
         ),
@@ -440,9 +440,9 @@ def updateMap(selectedRegion, selectedBed, selectedBath):
                 side='top'
             ),
             x=0.05,
-            xanchor='left',  # Align the left side of the color bar at the x position
-            y=0.5,  # Center the color bar vertically
-            yanchor='middle',  # Align the middle of the color bar at the y position
+            xanchor='left',
+            y=0.5,
+            yanchor='middle',
         )
     )
 
@@ -714,7 +714,7 @@ def updateHouseScatterplot(region, clickStored):
     )
 
     fig.update_traces(
-        hoverinfo="x+y+text",  # Customize which information to show
+        hoverinfo="x+y+text",
         hovertemplate="<b>Category:</b> %{x}<br><b>Value:</b> %{y}<extra></extra>"
     )
 
@@ -797,7 +797,7 @@ def updateMergedBubbleChart(region, clickStored):
     )
 
     fig.update_traces(
-        hoverinfo="x+y+text",  # Customize which information to show
+        hoverinfo="x+y+text",
         hovertemplate="<b>Avg Magnitude:</b> %{y}<br>"
                       "<b>Avg House Price:</b> %{x}<br>"
                       "<b>Avg Land Area:</b> %{marker.size}<extra></extra>",
