@@ -604,7 +604,7 @@ def updateHouseBoxplot(region, clickStored):
     fig.update_layout(
         margin=dict(l=0, r=0, t=10, b=10),
 
-        showlegend=True,
+        showlegend=False,
         paper_bgcolor=offWhite2,
         title=dict(
             text=f"House Prices Distribution",
