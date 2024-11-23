@@ -150,6 +150,13 @@ h2 {
     margin-bottom: 0;
 }
 
+#footnoteDiv{
+    width: 60vw;
+    margin-left: 30vw;
+    margin-top:-65px;
+    text-align: right;
+    padding:0;
+}
 
 .sectionTitle{
     display: inline-block;

@@ -163,6 +163,11 @@ app.layout = html.Div(children=[
         )
     ),
 
+    html.Div(
+        id='footnoteDiv',
+        children=[html.P('Note: White areas have insufficient data')]
+    ),
+
     html.Br(),
     html.Br(),
     html.Br(),
@@ -592,13 +597,14 @@ def updateHouseBoxplot(region, clickStored):
             y='price',
             color='coloring',
             color_discrete_sequence=colorSequenceList,
-            hover_data = {'province': False},
+            hover_data={'province': False},
         )
+
 
     fig.update_layout(
         margin=dict(l=0, r=0, t=10, b=10),
 
-        showlegend=False,
+        showlegend=True,
         paper_bgcolor=offWhite2,
         title=dict(
             text=f"House Prices Distribution",
