@@ -19,5 +19,7 @@ The extent of the average person’s knowledge regarding occurrences of earthqua
 # Project team
 
 Abino, Wendell 
+
 Reynoso, Markus
+
 Lim, Dave Jared
