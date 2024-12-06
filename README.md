@@ -1,4 +1,3 @@
-# datanvi_final_proj
 
 # Application name
 An Integrated View of House Pricing, and Seismic Events.
